@@ -4,6 +4,7 @@ import io.slingr.endpoints.utils.Json;
 import io.slingr.endpoints.utils.tests.EndpointTests;
 import io.slingr.endpoints.ws.exchange.FunctionRequest;
 
+import io.slingr.endpoints.ws.exchange.WebServiceResponse;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;

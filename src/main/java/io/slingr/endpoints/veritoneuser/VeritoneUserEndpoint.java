@@ -1,6 +1,5 @@
 package io.slingr.endpoints.veritoneuser;
 
-
 import io.slingr.endpoints.HttpPerUserEndpoint;
 import io.slingr.endpoints.exceptions.EndpointException;
 import io.slingr.endpoints.framework.annotations.*;
@@ -17,11 +16,6 @@ import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 @SlingrEndpoint(name = "veritone-user")
 public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
@@ -76,7 +70,6 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
     public Json connectUser(FunctionRequest request) {
         final String userId = request.getUserId();
         if(StringUtils.isNotBlank(userId)) {
-            // TODO implement veritone logic here
             // checks if the user includes a non-empty 'code' on the request
             final Json jsonBody = request.getJsonParams();
             if (jsonBody != null && StringUtils.isNotBlank(jsonBody.string("code"))) {
