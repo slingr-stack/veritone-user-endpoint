@@ -6,10 +6,8 @@ import io.slingr.endpoints.framework.annotations.*;
 import io.slingr.endpoints.exceptions.ErrorCode;
 import io.slingr.endpoints.services.AppLogs;
 import io.slingr.endpoints.services.exchange.ReservedName;
-import io.slingr.endpoints.services.datastores.DataStore;
 import io.slingr.endpoints.utils.Json;
 import io.slingr.endpoints.ws.exchange.FunctionRequest;
-import io.slingr.endpoints.ws.exchange.WebServiceRequest;
 import io.slingr.endpoints.ws.exchange.WebServiceResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.entity.ContentType;
@@ -21,11 +19,12 @@ import org.slf4j.LoggerFactory;
 public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
     private static final Logger logger = LoggerFactory.getLogger(VeritoneUserEndpoint.class);
 
-    @EndpointProperty
-    private String environment;
 
     @ApplicationLogger
     protected AppLogs appLogger;
+
+    @EndpointProperty
+    private String environment;
 
     @EndpointProperty
     private String clientId;
@@ -37,6 +36,10 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
     private String redirectUri;
 
     public VeritoneUserEndpoint() {
+
+    }
+    public VeritoneUserEndpoint(String environment) {
+        this.environment = environment;
     }
 
     @Override
@@ -106,15 +109,13 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
         return Json.map();
     }
 
-
-
     // Internal methods
 
-    @EndpointFunction(name = "_userGet")
-    public Json userGet(FunctionRequest request) {
+    @EndpointFunction(name = "_userPost")
+    public Json userPost(FunctionRequest request) {
         try {
-            //setUserRequestHeaders(request);
-            Json res = defaultGetRequest(request);
+            setUserRequestHeaders(request);
+            Json res = defaultPostRequest(request);
             return res;
         } catch (EndpointException restException) {
             if (restException.getCode() == ErrorCode.CLIENT) {
@@ -122,5 +123,22 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
             }
             throw restException;
         }
+    }
+
+    private void setUserRequestHeaders(FunctionRequest request) {
+        Json userConfig = users().findById(request.getUserId());
+        if (userConfig == null || userConfig.isEmpty("access_token")) {
+            throw EndpointException.permanent(ErrorCode.CLIENT, String.format("User [%s] is not connected", request.getUserEmail()));
+        }
+        Json body = request.getJsonParams();
+        String token = userConfig.string("access_token");
+        Json headers = body.json("headers");
+        if (headers == null) {
+            headers = Json.map();
+        }
+        headers.set("Authorization", "Bearer " + token);
+        headers.set("Content-Type", "application/json");
+        body.set("headers", headers);
+        request.getRequest().set("params", body);
     }
 }
