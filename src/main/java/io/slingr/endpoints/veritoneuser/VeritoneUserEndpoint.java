@@ -118,7 +118,12 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
             Json res = defaultPostRequest(request);
             return res;
         } catch (EndpointException restException) {
-            if (restException.getCode() == ErrorCode.CLIENT) {
+            if (restException.getHttpStatusCode() == 401) {
+                // we might need to refresh the token
+                generateNewAccessToken(request);
+                setUserRequestHeaders(request);
+                return defaultPostRequest(request);
+            } else if (restException.getCode() == ErrorCode.CLIENT) {
                 users().sendUserDisconnectedEvent(request.getUserId());
             }
             throw restException;
@@ -140,5 +145,43 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
         headers.set("Content-Type", "application/json");
         body.set("headers", headers);
         request.getRequest().set("params", body);
+    }
+
+    private void generateNewAccessToken(FunctionRequest request) {
+
+        final String userId = request.getUserId();
+        Json userConfig = users().findById(userId);
+        if (userConfig == null || userConfig.isEmpty("refresh_token")) {
+            throw EndpointException.permanent(ErrorCode.CLIENT, String.format("User [%s] is not connected", request.getUserEmail()));
+        }
+        String refreshToken = userConfig.string("refresh_token");
+        Json accessTokenRequest = Json.map()
+                .set("path", getApiUri() + "/v1/admin/oauth/token")
+                .set("headers", Json.map().set("Content-Type", "application/x-www-form-urlencoded"))
+                .set("body", Json.map()
+                        .set("client_id", clientId)
+                        .set("client_secret", clientSecret)
+                        .set("grant_type", "refresh_token")
+                        .set("refresh_token", refreshToken)
+                );
+
+        try {
+            Json res = httpService().defaultPostRequest(accessTokenRequest);
+            if (res.contains("access_token")) {
+                // saves the information on the users data store
+                Json conf = users().save(userId, res);
+                logger.info(String.format("User connected [%s] [%s]", userId, conf.toString()));
+
+                // sends connected user event
+                users().sendUserConnectedEvent(request.getFunctionId(), userId, conf);
+
+            } else {
+                logger.warn(String.format("Problems trying to connect user [%s] to Veritone: %s", userId, res.toString()));
+                appLogger.warn(String.format("Problems trying to connect user [%s] to Veritone %s", userId, res.string("error")));
+            }
+        } catch (Exception e) {
+            appLogger.error(String.format("Error refreshing token for client ID [%s]. You might need to get a new refresh token.", clientId));
+            throw e;
+        }
     }
 }

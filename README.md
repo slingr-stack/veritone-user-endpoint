@@ -1,9 +1,9 @@
 ---
-title: Veritone endpoint
+title: Veritone user endpoint
 keywords:
 last_updated: January 31, 2022
 tags: []
-summary: "Detailed description of the API of the Veritone endpoint."
+summary: "Detailed description of the API of the Veritone user endpoint."
 ---
 
 # Overview
@@ -18,7 +18,7 @@ Some of the features in this endpoint are:
 To make a GraphQL query, you can do something like this:
 
 ```js
-var res = app.endpoints.veritone.gql(`
+var res = app.endpoints.veritoneuser.gql(`
   mutation runEngineJob {
     createJob(
       input: {
@@ -43,7 +43,7 @@ var res = app.endpoints.veritone.gql(`
       id
     }
   }
-`);
+`,`{}`);
 ```
 
 Reference the [GraphQL API](https://docs.veritone.com/#/apis/using-graphql) for more information.
@@ -61,31 +61,14 @@ API token to access Veritone's services
 GraphQL API allows you to do everything you need. You can make a GraphQL query like this:
 
 ```js
-var res = app.endpoints.veritone.gql(`
-  mutation runEngineJob {
-    createJob(
-      input: {
-        targetId: "102014611",
-        tasks: [
-          {
-            engineId: "8081cc99-c6c2-49b0-ab59-c5901a503508"
-          },
-          {
-            engineId: "insert-into-index"
-          },
-          {
-            engineId: "thumbnail-generator"
-          },
-          {
-            engineId: "mention-generate"
-          }
-        ]
-      }
-    )
-    {
-      id
-    }
-  }
+var res = app.endpoints.veritoneuser.gql(`
+  mutation userLogin ($userName: String! $password: String!) {
+                  userLogin(input: {userName: $userName password: $password}) {
+                    token
+                  }
+                }
+`,`
+ {"userName": "jdoe@mycompany.com","password": "Password123"}
 `);
 ```
 
@@ -109,7 +92,7 @@ Instead of having to use the generic HTTP methods, you can (and should) make use
 * HTTP Method: 'POST'
 * More info: https://docs.veritone.com/#/apis/tutorials/graphql-basics
 ```javascript
-app.endpoints.veritone.gql(query)
+app.endpoints.veritoneuser.gql(query, variables)
 ```
 
 </details>

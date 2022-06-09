@@ -34,8 +34,7 @@
     ],
     "scripts": [
         "helpers.js",
-        "functions.js",
-        "veritone-users-queries.js"
+        "functions.js"
     ],
     "listeners":[],
     "configuration":[
