@@ -73,40 +73,48 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
     public Json connectUser(FunctionRequest request) {
         final String userId = request.getUserId();
         if(StringUtils.isNotBlank(userId)) {
-            // checks if the user includes a non-empty 'code' on the request
-            final Json jsonBody = request.getJsonParams();
-            if (jsonBody != null && StringUtils.isNotBlank(jsonBody.string("code"))) {
-                String code = jsonBody.string("code");
-                Json accessTokenRequest = Json.map()
-                        .set("path", getApiUri() + "/v1/admin/oauth/token")
-                        .set("headers", Json.map().set("Content-Type", "application/x-www-form-urlencoded"))
-                        .set("body", Json.map()
-                                .set("client_id", clientId)
-                                .set("client_secret", clientSecret)
-                                .set("code", code)
-                                .set("redirect_uri", jsonBody.string("redirectUri"))
-                                .set("grant_type", "authorization_code")
-                        );
-                Json res = httpService().defaultPostRequest(accessTokenRequest);
-                if (res.contains("access_token")) {
-                    // saves the information on the users data store
-                    Json conf = users().save(userId, res);
-                    logger.info(String.format("User connected [%s] [%s]", userId, conf.toString()));
-
-                    // sends connected user event
-                    users().sendUserConnectedEvent(request.getFunctionId(), userId, conf);
-
-                    return conf;
-                } else {
-                    logger.warn(String.format("Problems trying to connect user [%s] to Veritone: %s", userId, res.toString()));
-                    appLogger.warn(String.format("Problems trying to connect user [%s] to Veritone %s", userId, res.string("error")));
-                }
+            String accessToken = request.getRequest().string("access_token");
+            String refreshToken = request.getRequest().string("refresh_token");
+            if (StringUtils.isNotBlank(accessToken)  && StringUtils.isNotBlank(refreshToken)) {
+                Json userConf = Json.map();
+                userConf.set("access_token", accessToken);
+                userConf.set("refresh_token", refreshToken);
+                setUserConnected(request, userId, userConf);
             } else {
-                logger.info(String.format("Empty 'code' when try to connect user [%s] [%s]", userId, request.toString()));
+                Json conf = accessTokenRequest(request, userId);
+                if (conf != null) return conf;
             }
         }
         defaultMethodDisconnectUsers(request);
         return Json.map();
+    }
+
+    private Json accessTokenRequest(FunctionRequest request, String userId) {
+        // checks if the user includes a non-empty 'code' on the request
+        final Json jsonBody = request.getJsonParams();
+        if (jsonBody != null && StringUtils.isNotBlank(jsonBody.string("code"))) {
+            String code = jsonBody.string("code");
+            Json accessTokenRequest = Json.map()
+                    .set("path", getApiUri() + "/v1/admin/oauth/token")
+                    .set("headers", Json.map().set("Content-Type", "application/x-www-form-urlencoded"))
+                    .set("body", Json.map()
+                            .set("client_id", clientId)
+                            .set("client_secret", clientSecret)
+                            .set("code", code)
+                            .set("redirect_uri", jsonBody.string("redirectUri"))
+                            .set("grant_type", "authorization_code")
+                    );
+            Json res = httpService().defaultPostRequest(accessTokenRequest);
+            if (res.contains("access_token")) {
+                return setUserConnected(request, userId, res);
+            } else {
+                logger.warn(String.format("Problems trying to connect user [%s] to Veritone: %s", userId, res.toString()));
+                appLogger.warn(String.format("Problems trying to connect user [%s] to Veritone %s", userId, res.string("error")));
+            }
+        } else {
+            logger.info(String.format("Empty 'code' when try to connect user [%s] [%s]", userId, request.toString()));
+        }
+        return null;
     }
 
     // Internal methods
@@ -168,13 +176,7 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
         try {
             Json res = httpService().defaultPostRequest(accessTokenRequest);
             if (res.contains("access_token")) {
-                // saves the information on the users data store
-                Json conf = users().save(userId, res);
-                logger.info(String.format("User connected [%s] [%s]", userId, conf.toString()));
-
-                // sends connected user event
-                users().sendUserConnectedEvent(request.getFunctionId(), userId, conf);
-
+                setUserConnected(request, userId, res);
             } else {
                 logger.warn(String.format("Problems trying to connect user [%s] to Veritone: %s", userId, res.toString()));
                 appLogger.warn(String.format("Problems trying to connect user [%s] to Veritone %s", userId, res.string("error")));
@@ -184,4 +186,16 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
             throw e;
         }
     }
+
+    private Json setUserConnected(FunctionRequest request, String userId, Json res) {
+        // saves the information on the users data store
+        Json conf = users().save(userId, res);
+        logger.info(String.format("User connected [%s] [%s]", userId, conf.toString()));
+
+        // sends connected user event
+        users().sendUserConnectedEvent(request.getFunctionId(), userId, conf);
+        return conf;
+    }
+
+
 }
