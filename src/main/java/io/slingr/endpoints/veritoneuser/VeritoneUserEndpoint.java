@@ -79,10 +79,9 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
                 Json userConf = Json.map();
                 userConf.set("access_token", accessToken);
                 userConf.set("refresh_token", refreshToken);
-                setUserConnected(request, userId, userConf);
+                return setUserConnected(request, userId, userConf);
             } else {
-                Json conf = accessTokenRequest(request, userId);
-                if (conf != null) return conf;
+                return accessTokenRequest(request, userId);
             }
         }
         defaultMethodDisconnectUsers(request);
@@ -114,7 +113,7 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
         } else {
             logger.info(String.format("Empty 'code' when try to connect user [%s] [%s]", userId, request.toString()));
         }
-        return null;
+        return Json.map();
     }
 
     // Internal methods
