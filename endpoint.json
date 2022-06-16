@@ -1,6 +1,6 @@
 {
     "label": "Veritone User",
-    "name": "veritone-user",
+    "name": "veritoneuser",
     "apiVersion": "v1",
     "internal": false,
     "configurationType": "PER_USER",

@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-@SlingrEndpoint(name = "veritone-user")
+@SlingrEndpoint(name = "veritoneuser")
 public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
     private static final Logger logger = LoggerFactory.getLogger(VeritoneUserEndpoint.class);
 
