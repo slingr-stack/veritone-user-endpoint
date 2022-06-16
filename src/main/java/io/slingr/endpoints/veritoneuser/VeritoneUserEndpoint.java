@@ -73,8 +73,8 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
     public Json connectUser(FunctionRequest request) {
         final String userId = request.getUserId();
         if(StringUtils.isNotBlank(userId)) {
-            String accessToken = request.getRequest().string("access_token");
-            String refreshToken = request.getRequest().string("refresh_token");
+            String accessToken = request.getJsonParams().string("accessToken");
+            String refreshToken = request.getJsonParams().string("refreshToken");
             if (StringUtils.isNotBlank(accessToken)  && StringUtils.isNotBlank(refreshToken)) {
                 Json userConf = Json.map();
                 userConf.set("access_token", accessToken);
