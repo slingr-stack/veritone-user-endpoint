@@ -6,6 +6,7 @@ import io.slingr.endpoints.framework.annotations.*;
 import io.slingr.endpoints.exceptions.ErrorCode;
 import io.slingr.endpoints.services.AppLogs;
 import io.slingr.endpoints.services.exchange.ReservedName;
+import io.slingr.endpoints.services.rest.RestClient;
 import io.slingr.endpoints.utils.Json;
 import io.slingr.endpoints.ws.exchange.FunctionRequest;
 import io.slingr.endpoints.ws.exchange.WebServiceResponse;
@@ -56,7 +57,6 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
     }
 
     // Authentication process
-
     @EndpointWebService(path = "authCallback")
     public WebServiceResponse authCallback() {
         return new WebServiceResponse("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n" +
@@ -94,7 +94,6 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
         if (jsonBody != null && StringUtils.isNotBlank(jsonBody.string("code"))) {
             String code = jsonBody.string("code");
             Json accessTokenRequest = Json.map()
-                    .set("path", getApiUri() + "/v1/admin/oauth/token")
                     .set("headers", Json.map().set("Content-Type", "application/x-www-form-urlencoded"))
                     .set("body", Json.map()
                             .set("client_id", clientId)
@@ -103,7 +102,7 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
                             .set("redirect_uri", jsonBody.string("redirectUri"))
                             .set("grant_type", "authorization_code")
                     );
-            Json res = httpService().defaultPostRequest(accessTokenRequest);
+            Json res = RestClient.builder(getApiUri().concat("/v1/admin/oauth/token")).httpPost(accessTokenRequest);
             if (res.contains("access_token")) {
                 return setUserConnected(request, userId, res);
             } else {
@@ -117,7 +116,6 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
     }
 
     // Internal methods
-
     @EndpointFunction(name = "_userPost")
     public Json userPost(FunctionRequest request) {
         try {
@@ -155,7 +153,6 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
     }
 
     private void generateNewAccessToken(FunctionRequest request) {
-
         final String userId = request.getUserId();
         Json userConfig = users().findById(userId);
         if (userConfig == null || userConfig.isEmpty("refresh_token")) {
@@ -163,7 +160,6 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
         }
         String refreshToken = userConfig.string("refresh_token");
         Json accessTokenRequest = Json.map()
-                .set("path", getApiUri() + "/v1/admin/oauth/token")
                 .set("headers", Json.map().set("Content-Type", "application/x-www-form-urlencoded"))
                 .set("body", Json.map()
                         .set("client_id", clientId)
@@ -171,9 +167,8 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
                         .set("grant_type", "refresh_token")
                         .set("refresh_token", refreshToken)
                 );
-
         try {
-            Json res = httpService().defaultPostRequest(accessTokenRequest);
+            Json res = RestClient.builder(getApiUri().concat("/v1/admin/oauth/token")).httpPost(accessTokenRequest);
             if (res.contains("access_token")) {
                 setUserConnected(request, userId, res);
             } else {
@@ -190,7 +185,6 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
         // saves the information on the users data store
         Json conf = users().save(userId, res);
         logger.info(String.format("User connected [%s] [%s]", userId, conf.toString()));
-
         // sends connected user event
         users().sendUserConnectedEvent(request.getFunctionId(), userId, conf);
         return conf;
