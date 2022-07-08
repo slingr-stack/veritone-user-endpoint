@@ -7,8 +7,10 @@ import io.slingr.endpoints.exceptions.ErrorCode;
 import io.slingr.endpoints.services.AppLogs;
 import io.slingr.endpoints.services.exchange.ReservedName;
 import io.slingr.endpoints.services.rest.RestClient;
+import io.slingr.endpoints.services.rest.RestMethod;
 import io.slingr.endpoints.utils.Json;
 import io.slingr.endpoints.ws.exchange.FunctionRequest;
+import io.slingr.endpoints.ws.exchange.WebServiceRequest;
 import io.slingr.endpoints.ws.exchange.WebServiceResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.entity.ContentType;
@@ -133,6 +135,12 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
             }
             throw restException;
         }
+    }
+
+    @EndpointWebService(methods = {RestMethod.POST})
+    private WebServiceResponse inboundEvent(WebServiceRequest request) {
+        events().send("webhook", request.getJsonBody());
+        return new WebServiceResponse();
     }
 
     private void setUserRequestHeaders(FunctionRequest request) {
