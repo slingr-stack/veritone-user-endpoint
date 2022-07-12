@@ -50,7 +50,7 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
         if (environment.equals("production")) {
             return "https://api.veritone.com";
         } else {
-            return "https://api.stage-me.us-1.veritone.com";
+            return "https://api.stage.us-1.veritone.com";
         }
     }
 
