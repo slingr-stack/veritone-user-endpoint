@@ -56,6 +56,7 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
 
     @Override
     public void endpointStarted() {
+        httpService().setAllowExternalUrl(true);
     }
 
     // Authentication process
