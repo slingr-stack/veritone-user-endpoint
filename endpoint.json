@@ -30,6 +30,12 @@
             "name": "_userPost",
             "functionType": "PER_USER",
             "description": "Sends a POST request using user credentials"
+        },
+        {
+            "label": "User GET",
+            "name": "_userGet",
+            "functionType": "PER_USER",
+            "description": "Sends a GET request using user credentials"
         }
     ],
     "scripts": [

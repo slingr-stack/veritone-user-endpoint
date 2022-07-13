@@ -1,10 +1,14 @@
 
-
 endpoint.user = endpoint.user || {};
 
 endpoint.user.post = function (url, options) {
     options = checkHttpOptions(url, options);
     return endpoint._userPost(options);
+};
+
+endpoint.user.get = function (url) {
+    options = checkHttpOptions(url, {});
+    return endpoint._userGet(options);
 };
 
 endpoint.utils = endpoint.utils || {};

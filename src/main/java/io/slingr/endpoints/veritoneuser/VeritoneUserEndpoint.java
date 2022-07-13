@@ -117,12 +117,30 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
         return Json.map();
     }
 
-    // Internal methods
     @EndpointFunction(name = "_userPost")
     public Json userPost(FunctionRequest request) {
         try {
             setUserRequestHeaders(request);
             Json res = defaultPostRequest(request);
+            return res;
+        } catch (EndpointException restException) {
+            if (restException.getHttpStatusCode() == 401) {
+                // we might need to refresh the token
+                generateNewAccessToken(request);
+                setUserRequestHeaders(request);
+                return defaultPostRequest(request);
+            } else if (restException.getCode() == ErrorCode.CLIENT) {
+                users().sendUserDisconnectedEvent(request.getUserId());
+            }
+            throw restException;
+        }
+    }
+
+    @EndpointFunction(name = "_userGet")
+    public Json appGet(FunctionRequest request) {
+        try {
+            setUserRequestHeaders(request);
+            Json res = defaultGetRequest(request);
             return res;
         } catch (EndpointException restException) {
             if (restException.getHttpStatusCode() == 401) {
