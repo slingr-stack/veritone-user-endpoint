@@ -137,7 +137,7 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
     }
 
     @EndpointFunction(name = "_userGet")
-    public Json appGet(FunctionRequest request) {
+    public Json userGet(FunctionRequest request) {
         try {
             setUserRequestHeaders(request);
             Json res = defaultGetRequest(request);
