@@ -41,6 +41,7 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
     public VeritoneUserEndpoint() {
 
     }
+
     public VeritoneUserEndpoint(String environment) {
         this.environment = environment;
     }
@@ -75,10 +76,10 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
     @EndpointFunction(name = ReservedName.CONNECT_USER)
     public Json connectUser(FunctionRequest request) {
         final String userId = request.getUserId();
-        if(StringUtils.isNotBlank(userId)) {
+        if (StringUtils.isNotBlank(userId)) {
             String accessToken = request.getJsonParams().string("accessToken");
             String refreshToken = request.getJsonParams().string("refreshToken");
-            if (StringUtils.isNotBlank(accessToken)  && StringUtils.isNotBlank(refreshToken)) {
+            if (StringUtils.isNotBlank(accessToken) && StringUtils.isNotBlank(refreshToken)) {
                 Json userConf = Json.map();
                 userConf.set("access_token", accessToken);
                 userConf.set("refresh_token", refreshToken);
@@ -137,23 +138,10 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
         }
     }
 
-    @EndpointFunction(name = "_userGet")
-    public Json userGet(FunctionRequest request) {
-        try {
-            setUserRequestHeaders(request);
-            Json res = defaultGetRequest(request);
-            return res;
-        } catch (EndpointException restException) {
-            if (restException.getHttpStatusCode() == 401) {
-                // we might need to refresh the token
-                generateNewAccessToken(request);
-                setUserRequestHeaders(request);
-                return defaultPostRequest(request);
-            } else if (restException.getCode() == ErrorCode.CLIENT) {
-                users().sendUserDisconnectedEvent(request.getUserId());
-            }
-            throw restException;
-        }
+    @EndpointFunction(name = "_defaultGet")
+    public Json defaultGet(FunctionRequest request) {
+        Json res = defaultGetRequest(request);
+        return res;
     }
 
     @EndpointWebService(methods = {RestMethod.POST})

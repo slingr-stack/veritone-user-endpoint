@@ -6,9 +6,9 @@ endpoint.user.post = function (url, options) {
     return endpoint._userPost(options);
 };
 
-endpoint.user.get = function (url) {
+endpoint.get = function (url) {
     options = checkHttpOptions(url, {});
-    return endpoint._userGet(options);
+    return endpoint._defaultGet(options);
 };
 
 endpoint.utils = endpoint.utils || {};
