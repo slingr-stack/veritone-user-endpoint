@@ -76,6 +76,12 @@
             "description": "The OAuth callback to configure in your Veritone App",
             "type": "label",
             "value": "config.WEBHOOK_URL+'/authCallback'"
+        },
+        {
+            "name": "webhook",
+            "label": "Webhooks URL",
+            "type": "label",
+            "value": "@config.WEBHOOK_URL"
         }
     ],
     "userConfiguration":[
