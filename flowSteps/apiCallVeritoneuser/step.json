@@ -7,8 +7,19 @@
     {
       "label": "Url",
       "name": "url",
-      "value": "POST /v3/graphql",
-      "type": "info"
+      "description": "The method and path to which this endpoint is to send requests in a generic way.",
+      "type": "urlParams",
+      "required": "true",
+      "defaultValue": "post1",
+      "options": {
+        "type": "dropDown",
+        "possibleValues": [
+          {
+            "label": "POST /v3/graphql/{query}",
+            "name": "post1"
+          }
+        ]
+      }
     },
     {
       "label": "Query",
