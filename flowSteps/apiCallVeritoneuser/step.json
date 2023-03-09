@@ -8,7 +8,8 @@
       "label": "Url",
       "name": "url",
       "description": "POST /v3/graphql (Is the method and path to which this endpoint is to send requests in a generic way).",
-      "type": "label"
+      "type": "label",
+      "value" : "POST /v3/graphql"
     },
     {
       "label": "Query",
@@ -16,7 +17,10 @@
       "description": "Graphql custom query.",
       "type": "text",
       "required": "true",
-      "representation": "textarea"
+      "representation": "textarea",
+      "options": {
+        "allowContextSelector": "false"
+      }
     },
     {
       "label": "Variables",
@@ -24,7 +28,10 @@
       "description": "Variables to use in the graphql query.",
       "type": "text",
       "required": "true",
-      "representation": "textarea"
+      "representation": "textarea",
+      "options": {
+        "allowContextSelector": "false"
+      }
     },
     {
       "label": "Override Settings",
