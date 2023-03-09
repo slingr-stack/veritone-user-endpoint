@@ -26,21 +26,17 @@
     ],
     "functions": [
         {
-            "label": "User POST",
-            "name": "_userPost",
+            "label": "POST",
+            "name": "_post",
             "functionType": "PER_USER",
             "description": "Sends a POST request using user credentials"
-        },
-        {
-            "label": "Default GET",
-            "name": "_defaultGet",
-            "functionType": "GLOBAL",
-            "description": "Sends a generic GET request "
         }
     ],
     "scripts": [
-        "helpers.js",
         "functions.js"
+    ],
+    "flowSteps": [
+        "apiCallVeritoneuser"
     ],
     "listeners":[],
     "configuration":[
