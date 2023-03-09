@@ -7,7 +7,7 @@
     {
       "label": "Url",
       "name": "url",
-      "description": "POST /v3/graphql",
+      "value": "POST /v3/graphql",
       "type": "info"
     },
     {
