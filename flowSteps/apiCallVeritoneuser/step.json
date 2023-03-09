@@ -7,13 +7,8 @@
     {
       "label": "Url",
       "name": "url",
-      "description": "Is the method and path to which this endpoint is to send requests in a generic way.",
-      "type": "text",
-      "options": {
-        "allowContextSelector": "false"
-      },
-      "readOnly": "true",
-      "value": "POST /v3/graphql"
+      "description": "POST /v3/graphql",
+      "type": "info"
     },
     {
       "label": "Query",
