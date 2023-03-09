@@ -15,7 +15,7 @@
         "type": "dropDown",
         "possibleValues": [
           {
-            "label": "POST /v3/graphql/{query}",
+            "label": "POST /v3/graphql",
             "name": "post1"
           }
         ]
