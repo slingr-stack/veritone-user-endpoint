@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
 public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
     private static final Logger logger = LoggerFactory.getLogger(VeritoneUserEndpoint.class);
 
-
     @ApplicationLogger
     protected AppLogs appLogger;
 
@@ -38,9 +37,7 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
     @EndpointProperty
     private String redirectUri;
 
-    public VeritoneUserEndpoint() {
-
-    }
+    public VeritoneUserEndpoint() { }
 
     public VeritoneUserEndpoint(String environment) {
         this.environment = environment;
@@ -51,7 +48,7 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
         if (environment.equals("production")) {
             return "https://api.veritone.com";
         } else {
-            return "https://api.stage.us-1.veritone.com";
+            return "https://api.stage-me.us-1.veritone.com";
         }
     }
 
@@ -119,12 +116,11 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
         return Json.map();
     }
 
-    @EndpointFunction(name = "_userPost")
+    @EndpointFunction(name = "_post")
     public Json userPost(FunctionRequest request) {
         try {
             setUserRequestHeaders(request);
-            Json res = defaultPostRequest(request);
-            return res;
+            return defaultPostRequest(request);
         } catch (EndpointException restException) {
             if (restException.getHttpStatusCode() == 401) {
                 // we might need to refresh the token
@@ -136,12 +132,6 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
             }
             throw restException;
         }
-    }
-
-    @EndpointFunction(name = "_defaultGet")
-    public Json defaultGet(FunctionRequest request) {
-        Json res = defaultGetRequest(request);
-        return res;
     }
 
     @EndpointWebService(methods = {RestMethod.POST})
@@ -204,6 +194,4 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
         users().sendUserConnectedEvent(request.getFunctionId(), userId, conf);
         return conf;
     }
-
-
 }
