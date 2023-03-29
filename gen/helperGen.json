@@ -7,7 +7,7 @@
       "suffix": "",
       "method": "POST",
       "url": "/v3/graphql/:query/:variables",
-      "omittableUrlParts": ["v3", {"replace":"graphql","with":"gql"}]
+      "omittableUrlParts": ["v3"]
     }
   ]
 }

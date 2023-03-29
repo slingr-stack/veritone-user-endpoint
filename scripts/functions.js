@@ -10,7 +10,24 @@
 
 endpoint.gql = {};
 
-endpoint.gql.post = function(query, variables, httpOptions) {
+endpoint.graphql = {};
+
+endpoint.gql = function(query, variables, httpOptions) {
+    if (!query || !variables) {
+        sys.logs.error('Invalid argument received. This helper should receive the following parameters as non-empty strings: [query,variables].');
+        return;
+    }
+    var url = parse('/v3/graphql');
+    sys.logs.debug('[veritoneuser] POST from: ' + url);
+    httpOptions = httpOptions || {};
+    httpOptions.query = query;
+    httpOptions.variables = variables;
+    var options = checkHttpOptions(url, httpOptions);
+    return endpoint._post(options);
+};
+
+
+endpoint.graphql.post = function(query, variables, httpOptions) {
 	if (!query || !variables) {
         sys.logs.error('Invalid argument received. This helper should receive the following parameters as non-empty strings: [query,variables].');
         return;
