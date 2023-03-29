@@ -30,6 +30,12 @@
             "name": "_post",
             "functionType": "PER_USER",
             "description": "Sends a POST request using user credentials"
+        },
+        {
+            "label": "POST TEST",
+            "name": "userPostTest",
+            "functionType": "PER_USER",
+            "description": "Sends a POST request using user credentials"
         }
     ],
     "scripts": [

@@ -133,7 +133,23 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
             throw restException;
         }
     }
-
+    @EndpointFunction
+    public Json userPostTest(FunctionRequest request) {
+        try {
+            setUserRequestHeaders(request);
+            return defaultPostRequest(request);
+        } catch (EndpointException restException) {
+            if (restException.getHttpStatusCode() == 401) {
+                // we might need to refresh the token
+                generateNewAccessToken(request);
+                setUserRequestHeaders(request);
+                return defaultPostRequest(request);
+            } else if (restException.getCode() == ErrorCode.CLIENT) {
+                users().sendUserDisconnectedEvent(request.getUserId());
+            }
+            throw restException;
+        }
+    }
     @EndpointWebService(methods = {RestMethod.POST})
     private WebServiceResponse inboundEvent(WebServiceRequest request) {
         events().send("webhook", request.getJsonBody());
