@@ -46,7 +46,7 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
     @Override
     public String getApiUri() {
         if (environment.equals("production")) {
-            return "https://api.veritone.com";
+            return "https://api.us-1.veritone.com";
         } else {
             return "https://api.stage-me.us-1.veritone.com";
         }
