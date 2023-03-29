@@ -139,7 +139,8 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
             setUserRequestHeaders(request);
             return defaultPostRequest(request);
         } catch (EndpointException restException) {
-            if (restException.getHttpStatusCode() == 401) {
+            // not sure why but veritone sometimes retunrs 404 when the token is wrong
+            if (restException.getHttpStatusCode() == 401 || restException.getHttpStatusCode() == 404) {
                 // we might need to refresh the token
                 generateNewAccessToken(request);
                 setUserRequestHeaders(request);
