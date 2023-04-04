@@ -8,12 +8,10 @@
 //                                                                        //
 ////////////////////////////////////////////////////////////////////////////
 
-endpoint.gql = {};
-
 endpoint.graphql = {};
 
-endpoint.gql = function(query, variables, httpOptions) {
-    if (!query || !variables) {
+endpoint.graphql.post = function(query, variables, httpOptions) {
+	if (!query || !variables) {
         sys.logs.error('Invalid argument received. This helper should receive the following parameters as non-empty strings: [query,variables].');
         return;
     }
@@ -26,9 +24,12 @@ endpoint.gql = function(query, variables, httpOptions) {
     return endpoint._post(options);
 };
 
+// Old Compatibles Helpers
 
-endpoint.graphql.post = function(query, variables, httpOptions) {
-	if (!query || !variables) {
+endpoint.gql = {};
+
+endpoint.gql = function(query, variables, httpOptions) {
+    if (!query || !variables) {
         sys.logs.error('Invalid argument received. This helper should receive the following parameters as non-empty strings: [query,variables].');
         return;
     }
