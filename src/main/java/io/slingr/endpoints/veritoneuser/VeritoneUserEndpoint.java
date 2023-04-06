@@ -17,8 +17,10 @@ import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Objects;
 
-@SlingrEndpoint(name = "veritoneuser")
+
+@SlingrEndpoint(name = "veritoneuser", functionPrefix = "_")
 public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
     private static final Logger logger = LoggerFactory.getLogger(VeritoneUserEndpoint.class);
 
@@ -27,6 +29,9 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
 
     @EndpointProperty
     private String environment;
+
+    @EndpointProperty
+    private String region;
 
     @EndpointProperty
     private String clientId;
@@ -39,17 +44,33 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
 
     public VeritoneUserEndpoint() { }
 
-    public VeritoneUserEndpoint(String environment) {
-        this.environment = environment;
-    }
-
     @Override
     public String getApiUri() {
-        if (environment.equals("production")) {
-            return "https://api.us-1.veritone.com";
+        String prefix = "https://api";
+        String postfix = ".veritone.com";
+        String apiUri;
+
+        if (Objects.equals(environment, "dev")) {
+            apiUri = ".dev";
+        } else if (Objects.equals(environment, "stage")) {
+            apiUri = ".stage";
         } else {
-            return "https://api.stage-me.us-1.veritone.com";
+            apiUri = "";
         }
+
+        if (Objects.equals(region, "us-1")) {
+            apiUri = apiUri + ".us-1";
+        } else if (Objects.equals(region, "ca-1")) {
+            apiUri = apiUri + ".ca-1";
+        } else if (Objects.equals(region, "uk-1")) {
+            apiUri = apiUri + ".uk-1";
+        } else if (Objects.equals(region, "no")) {
+            apiUri = apiUri + "";
+        } else {
+            apiUri = apiUri + region;
+        }
+
+        return prefix + apiUri + postfix;
     }
 
     @Override
@@ -89,6 +110,13 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
         return Json.map();
     }
 
+    private Json setUserConnected(FunctionRequest request, String userId, Json res) {
+        Json conf = users().save(userId, res);
+        logger.info(String.format("User connected [%s] [%s]", userId, conf.toString()));
+        users().sendUserConnectedEvent(request.getFunctionId(), userId, conf);
+        return conf;
+    }
+
     private Json accessTokenRequest(FunctionRequest request, String userId) {
         // checks if the user includes a non-empty 'code' on the request
         final Json jsonBody = request.getJsonParams();
@@ -117,7 +145,7 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
     }
 
     @EndpointFunction(name = "_post")
-    public Json userPost(FunctionRequest request) {
+    public Json post(FunctionRequest request) {
         try {
             setUserRequestHeaders(request);
             return defaultPostRequest(request);
@@ -133,24 +161,7 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
             throw restException;
         }
     }
-    @EndpointFunction
-    public Json userPostTest(FunctionRequest request) {
-        try {
-            setUserRequestHeaders(request);
-            return defaultPostRequest(request);
-        } catch (EndpointException restException) {
-            // not sure why but veritone sometimes retunrs 404 when the token is wrong
-            if (restException.getHttpStatusCode() == 401 || restException.getHttpStatusCode() == 404) {
-                // we might need to refresh the token
-                generateNewAccessToken(request);
-                setUserRequestHeaders(request);
-                return defaultPostRequest(request);
-            } else if (restException.getCode() == ErrorCode.CLIENT) {
-                users().sendUserDisconnectedEvent(request.getUserId());
-            }
-            throw restException;
-        }
-    }
+
     @EndpointWebService(methods = {RestMethod.POST})
     private WebServiceResponse inboundEvent(WebServiceRequest request) {
         events().send("webhook", request.getJsonBody());
@@ -201,14 +212,5 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
             appLogger.error(String.format("Error refreshing token for client ID [%s]. You might need to get a new refresh token.", clientId));
             throw e;
         }
-    }
-
-    private Json setUserConnected(FunctionRequest request, String userId, Json res) {
-        // saves the information on the users data store
-        Json conf = users().save(userId, res);
-        logger.info(String.format("User connected [%s] [%s]", userId, conf.toString()));
-        // sends connected user event
-        users().sendUserConnectedEvent(request.getFunctionId(), userId, conf);
-        return conf;
     }
 }

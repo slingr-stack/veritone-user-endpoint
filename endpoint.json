@@ -26,16 +26,46 @@
     ],
     "functions": [
         {
+            "label": "GET",
+            "name": "_get",
+            "functionType": "PER_USER",
+            "description": "Sends a GET request"
+        },
+        {
             "label": "POST",
             "name": "_post",
             "functionType": "PER_USER",
-            "description": "Sends a POST request using user credentials"
+            "description": "Sends a POST request"
         },
         {
-            "label": "POST TEST",
-            "name": "userPostTest",
+            "label": "PUT",
+            "name": "_put",
             "functionType": "PER_USER",
-            "description": "Sends a POST request using user credentials"
+            "description": "Sends a PUT request"
+        },
+        {
+            "label": "PATCH",
+            "name": "_patch",
+            "functionType": "PER_USER",
+            "description": "Sends a PATCH request"
+        },
+        {
+            "label": "DELETE",
+            "name": "_delete",
+            "functionType": "PER_USER",
+            "description": "Sends a DELETE request"
+        },
+        {
+            "label": "HEAD",
+            "name": "_head",
+            "functionType": "PER_USER",
+            "description": "Sends a HEAD request"
+        },
+        {
+            "label": "OPTIONS",
+            "name": "_options",
+            "functionType": "PER_USER",
+            "description": "Sends a OPTIONS request"
         }
     ],
     "scripts": [
@@ -55,8 +85,60 @@
         {
             "name": "environment",
             "label": "Environment",
-            "type": "text",
-            "required": true
+            "description": "Select the environment to target for the AI Data API and AI Data Admin.",
+            "type": "buttonsGroup",
+            "required": true,
+            "defaultValue": "prod",
+            "typeOptions": {
+                "allowCustom": false,
+                "possibleValues":[
+                    {
+                        "label":"Developer",
+                        "name":"dev"
+                    },
+                    {
+                        "label":"Staging",
+                        "name":"stage"
+                    },
+                    {
+                        "label":"Production",
+                        "name":"prod"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "region",
+            "label": "Geographic region",
+            "description": "Select the geographic region to be targeted by the AI Data API and AI Data Admin. (Custom allowed i.e. 'us-1')",
+            "type": "buttonsGroup",
+            "required": true,
+            "defaultValue": "no",
+            "typeOptions": {
+                "allowCustom": true,
+                "possibleValues":[
+                    {
+                        "label":"US-1",
+                        "name":"us-1"
+                    },
+                    {
+                        "label":"CA-1",
+                        "name":"ca-1"
+                    },
+                    {
+                        "label":"UK-1",
+                        "name":"uk-1"
+                    },
+                    {
+                        "label":"UK",
+                        "name":"uk"
+                    },
+                    {
+                        "label":"Without region",
+                        "name":"no"
+                    }
+                ]
+            }
         },
         {
             "name": "clientId",
@@ -86,7 +168,7 @@
             "value": "@config.WEBHOOK_URL"
         }
     ],
-    "userConfiguration":[
+    "userConfiguration": [
         {
             "name": "code",
             "label": "Token",
