@@ -48,14 +48,12 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
     public String getApiUri() {
         String prefix = "https://api";
         String postfix = ".veritone.com";
-        String apiUri;
+        String apiUri="";
 
         if (Objects.equals(environment, "dev")) {
             apiUri = ".dev";
         } else if (Objects.equals(environment, "stage")) {
             apiUri = ".stage";
-        } else {
-            apiUri = "";
         }
 
         if (Objects.equals(region, "us-1")) {
@@ -64,8 +62,6 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
             apiUri = apiUri + ".ca-1";
         } else if (Objects.equals(region, "uk-1")) {
             apiUri = apiUri + ".uk-1";
-        } else if (Objects.equals(region, "no")) {
-            apiUri = apiUri + "";
         } else {
             apiUri = apiUri + region;
         }
