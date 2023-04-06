@@ -173,13 +173,13 @@
             "name": "code",
             "label": "Token",
             "type": "text",
-            "visibility": true
+            "visibility": false
         },
         {
             "name": "redirectUri",
             "label": "Redirect URI",
             "type": "text",
-            "visibility": true
+            "visibility": false
         },
         {
             "name" : "connectButton",
@@ -194,6 +194,6 @@
         }
     ],
     "userConfigurationButtons":{
-        "connect": false
+        "connect": true
     }
 }
