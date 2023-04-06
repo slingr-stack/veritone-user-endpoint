@@ -76,32 +76,15 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
 
     // Authentication process
     @EndpointWebService(path = "authCallback")
-    public WebServiceResponse authCallback(WebServiceRequest request) {
-        Json parameters = request.getParameters();
-        String userId="";
-
-        if (parameters != null && StringUtils.isNotBlank(parameters.string("code"))) {
-            String code = parameters.string("code");
-            Json accessTokenRequest = Json.map()
-                    .set("headers", Json.map().set("Content-Type", "application/x-www-form-urlencoded"))
-                    .set("body", Json.map()
-                            .set("client_id", clientId)
-                            .set("client_secret", clientSecret)
-                            .set("code", code)
-                            .set("redirect_uri", redirectUri)
-                            .set("grant_type", "authorization_code")
-                    );
-            Json res = RestClient.builder(getApiUri().concat("/v1/admin/oauth/token")).httpPost(accessTokenRequest);
-            if (res.contains("access_token")) {
-                //return setUserConnected(request, userId, res);
-            } else {
-                logger.warn(String.format("Problems trying to connect user [%s] to Veritone: %s", userId, res));
-                appLogger.warn(String.format("Problems trying to connect user [%s] to Veritone %s", userId, res.string("error")));
-            }
-        } else {
-            logger.info(String.format("Empty 'code' when try to connect user [%s] [%s]", userId, request.toString()));
-        }
-        return new WebServiceResponse();
+    public WebServiceResponse authCallback() {
+        return new WebServiceResponse("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n" +
+                "<html>\n" +
+                "<head>\n" +
+                "<title>Veritone authentication</title>\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "</body>\n" +
+                "</html>", ContentType.TEXT_HTML.toString());
     }
 
     @EndpointFunction(name = ReservedName.CONNECT_USER)
