@@ -1,5 +1,5 @@
 /**
- * This flow step will send generic request.
+ * This flow step will a generic request to AI Data API.
  *
  * @param {object} inputs
  * {string} query, This is used to config the query of the request.
@@ -8,7 +8,7 @@
  * {number} connectionTimeout, Read timeout interval, in milliseconds.
  * {number} readTimeout, Connect timeout interval, in milliseconds.
  */
-step.apiCallVeritoneuser = function (inputs) {
+step.apiDataVeritoneuser = function (inputs) {
 
 	var inputsLogic = {
 		fullResponse: inputs.fullResponse || false,
