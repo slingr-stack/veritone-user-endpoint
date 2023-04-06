@@ -70,6 +70,32 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
         return prefix + apiUri + postfix;
     }
 
+    public String getVoiceApiUri() {
+        String prefix = "https://voice2";
+        String postfix = ".veritone.com";
+        String apiUri="";
+
+        if (Objects.equals(environment, "dev")) {
+            apiUri = ".dev";
+        } else if (Objects.equals(environment, "stage")) {
+            apiUri = ".stage";
+        }
+
+        if (Objects.equals(region, "us-1")) {
+            apiUri = apiUri + ".us-1";
+        } else if (Objects.equals(region, "ca-1")) {
+            apiUri = apiUri + ".ca-1";
+        } else if (Objects.equals(region, "uk-1")) {
+            apiUri = apiUri + ".uk-1";
+        } else {
+            apiUri = apiUri + region;
+        }
+
+        return prefix + apiUri + postfix + "/api";
+    }
+
+    public String getProcessingApiUri() { return "https://api.aiware.com"; }
+
     @Override
     public void endpointStarted() {
         httpService().setAllowExternalUrl(true);
