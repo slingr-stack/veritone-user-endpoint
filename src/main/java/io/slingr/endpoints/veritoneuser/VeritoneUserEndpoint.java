@@ -44,7 +44,7 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
     public VeritoneUserEndpoint() { }
 
     @Override
-    public String getApiUri() { return getAIDataApiUri(); }
+    public String getApiUri() { return ""; }
 
     public String getAIDataApiUri() {
         String prefix = "https://api";
@@ -203,6 +203,7 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
     @EndpointFunction(name = "_get")
     public Json get(FunctionRequest request) {
         try {
+            request=setFunctionRequestUrl(request);
             setUserRequestHeaders(request);
             return defaultGetRequest(request);
         } catch (EndpointException restException) {
@@ -221,6 +222,7 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
     @EndpointFunction(name = "_post")
     public Json post(FunctionRequest request) {
         try {
+            request=setFunctionRequestUrl(request);
             setUserRequestHeaders(request);
             return defaultPostRequest(request);
         } catch (EndpointException restException) {
@@ -239,6 +241,7 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
     @EndpointFunction(name = "_put")
     public Json put(FunctionRequest request) {
         try {
+            request=setFunctionRequestUrl(request);
             setUserRequestHeaders(request);
             return defaultPutRequest(request);
         } catch (EndpointException restException) {
@@ -257,6 +260,7 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
     @EndpointFunction(name = "_patch")
     public Json patch(FunctionRequest request) {
         try {
+            request=setFunctionRequestUrl(request);
             setUserRequestHeaders(request);
             return defaultPatchRequest(request);
         } catch (EndpointException restException) {
@@ -275,6 +279,7 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
     @EndpointFunction(name = "_delete")
     public Json delete(FunctionRequest request) {
         try {
+            request=setFunctionRequestUrl(request);
             setUserRequestHeaders(request);
             return defaultDeleteRequest(request);
         } catch (EndpointException restException) {
@@ -288,6 +293,20 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
             }
             throw restException;
         }
+    }
+
+    // Set the correct URL for the request
+    private FunctionRequest setFunctionRequestUrl(FunctionRequest request) {
+        Json requestUpdated = request.toJson();
+        Json params = requestUpdated.json("params");
+        if (request.getJsonParams().string("path").startsWith("/edge/v1/")) {
+            requestUpdated.set("params", params.set("path", getProcessingApiUri() + requestUpdated.json("params").string("path")));
+        } else if (request.getJsonParams().string("path").startsWith("/v2/")) {
+            requestUpdated.set("params", params.set("path", getVoiceApiUri() + requestUpdated.json("params").string("path")));
+        } else {
+            requestUpdated.set("params", params.set("path", getAIDataApiUri() + requestUpdated.json("params").string("path")));
+        }
+        return new FunctionRequest(requestUpdated);
     }
 
     // All requests to Veritone need the access token here we set it

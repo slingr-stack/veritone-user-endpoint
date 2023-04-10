@@ -2132,6 +2132,10 @@ endpoint.voice.lexicon.lexeme.preview.post = function(lexiconid, httpOptions) {
 };
 
 endpoint.voice.tts.voice.get = function(voiceId, httpOptions) {
+    if (aguments.length === 0 || !voiceId) {
+        sys.logs.error('Invalid argument received. This helper should receive the following parameters as non-empty strings: [httpOptions or voiceId].');
+        return;
+    }
     if(!httpOptions){
         for (var i = 0 ; i < arguments.length; i++){
             if (isObject(arguments[i])){
@@ -2142,21 +2146,23 @@ endpoint.voice.tts.voice.get = function(voiceId, httpOptions) {
     var url;
     switch(arguments.length-1){
         case 0:
-			url = parse('/v2/tts/voice?lang');
-			break;
-		case 1:
-			url = parse('/v2/tts/voice/:voice_id', [voiceId]);
-			break;
-		case 2:
+            url = parse('/v2/tts/voice?lang');
+            var options = checkHttpOptions(url, voiceId);
+            break;
+        case 1:
             url = parse('/v2/tts/voice/:voice_id', [voiceId]);
+            var options = checkHttpOptions(url, httpOptions);
+            break;
+        case 2:
+            url = parse('/v2/tts/voice/:voice_id', [voiceId]);
+            var options = checkHttpOptions(url, httpOptions);
             break;
         default:
             sys.logs.error('Invalid argument received.');
             return;
     }
     sys.logs.debug('[veritoneuser] GET from: ' + url);
-	var options = checkHttpOptions(url, httpOptions);
-	return endpoint._get(options);
+    return endpoint._get(options);
 };
 
 endpoint.voice.tts.voice.versions.get = function(voiceId, httpOptions) {

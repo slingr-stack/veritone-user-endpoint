@@ -1136,22 +1136,6 @@
       }
     },
     {
-      "label": "Event",
-      "name": "events",
-      "type": "dropDown",
-      "description": "Select event",
-      "multiplicity": "one",
-      "options": {
-        "possibleValues": [
-          {
-            "label": "File Downloaded",
-            "name": "fileDownloaded"
-          }
-        ],
-        "allowContextSelector": "false"
-      }
-    },
-    {
       "label": "Override Settings",
       "name": "overrideSettings",
       "type": "boolean",
@@ -1159,38 +1143,6 @@
       "defaultValue": false,
       "options": {
         "allowContextSelector": "false"
-      }
-    },
-    {
-      "label": "Follow Redirects",
-      "name": "followRedirects",
-      "type": "boolean",
-      "description": "Follow the redirects when a HTTP request is executed",
-      "visibility": "config.overrideSettings",
-      "defaultValue": false,
-      "options": {
-        "allowContextSelector": "false"
-      }
-    },
-    {
-      "label": "Download",
-      "name": "download",
-      "type": "boolean",
-      "description": "Indicates that the resource has to be downloaded into a file instead of returning it in the response.",
-      "visibility": "config.overrideSettings && config.events != \"fileDownloaded\"",
-      "defaultValue": false,
-      "options": {
-        "allowContextSelector": "false"
-      }
-    },
-    {
-      "label": "File Name",
-      "name": "fileName",
-      "description": "If provided, the file will be stored with this name. If empty the file name will be calculated from the URL.",
-      "visibility": "(config.overrideSettings && config.download) || config.events === \"fileDownloaded\"",
-      "type": "text",
-      "options": {
-        "allowContextSelector": "true"
       }
     },
     {

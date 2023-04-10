@@ -86,7 +86,7 @@
         {
             "name": "environment",
             "label": "Environment",
-            "description": "Select the environment to target for the AI Data API and AI Data Admin.",
+            "description": "Select the environment to target for the AI Data API and AI Data Admin. (If you are unsure, select 'Production')",
             "type": "buttonsGroup",
             "required": true,
             "defaultValue": "prod",
@@ -111,7 +111,7 @@
         {
             "name": "region",
             "label": "Geographic region",
-            "description": "Select the geographic region to be targeted by the AI Data API and AI Data Admin. (Custom allowed i.e. 'us-1')",
+            "description": "Select the geographic region to be targeted by the AI Data API and AI Data Admin. (Custom allowed i.e. 'us-1'. If you are unsure, select 'Without region')",
             "type": "buttonsGroup",
             "required": true,
             "defaultValue": "no",
@@ -144,21 +144,28 @@
         {
             "name": "clientId",
             "label": "Client ID",
-            "description": "The client ID used for OAuth",
+            "description": "The client ID of your Veritone App",
             "type": "text",
             "required": true
         },
         {
             "name": "clientSecret",
             "label": "Client secret",
-            "description": "The client secret used for OAuth",
+            "description": "The client secret of your Veritone App",
             "type": "text",
             "required": true
         },
         {
+            "name": "oauthURL",
+            "label": "OAuth URL",
+            "description": "The OAuth URL to configure in your Veritone App (Copy this value and paste it in the 'URL' field of your Veritone App), If you rename the endpoint, you will need to update this value (i.e. https://appname.slingr.io/dev/runtime).",
+            "type": "label",
+            "value": "config.WEBHOOK_URL.replace('/endpoints/veritoneuser23', '/runtime')"
+        },
+        {
             "name": "oauthCallback",
-            "label": "OAuth callback",
-            "description": "The OAuth callback to configure in your Veritone App",
+            "label": "OAuth Redirect URI",
+            "description": "The OAuth redirect URL to configure in your Veritone App (Copy this value and paste it in the 'Redirect URI' field of your Veritone App)",
             "type": "label",
             "value": "config.WEBHOOK_URL+'/authCallback'"
         },
