@@ -795,12 +795,12 @@ endpoint.aiDataAdmin.applications.get = function(applicationId, httpOptions) {
     var url;
     switch(arguments.length){
         case 0:
-			url = parse('/api/admin/applications');
-			break;
-		case 1:
-			url = parse('/api/admin/applications/:applicationId', [applicationId]);
-			break;
-		case 2:
+            url = parse('/api/admin/applications');
+            break;
+        case 1:
+            url = parse('/api/admin/applications/:applicationId', [applicationId]);
+            break;
+        case 2:
             url = parse('/api/admin/applications/:applicationId', [applicationId]);
             break;
         default:
@@ -808,8 +808,8 @@ endpoint.aiDataAdmin.applications.get = function(applicationId, httpOptions) {
             return;
     }
     sys.logs.debug('[veritoneuser] GET from: ' + url);
-	var options = checkHttpOptions(url, httpOptions);
-	return endpoint._get(options);
+    var options = checkHttpOptions(url, httpOptions);
+    return endpoint._get(options);
 };
 
 endpoint.aiDataAdmin.applications.post = function(httpOptions) {
@@ -940,12 +940,12 @@ endpoint.aiDataAdmin.externalCredentials.get = function(externalCredentialId, ht
     var url;
     switch(arguments.length){
         case 0:
-			url = parse('/api/admin/external-credentials');
-			break;
-		case 1:
-			url = parse('/api/admin/external-credentials/:externalCredentialId', [externalCredentialId]);
-			break;
-		case 2:
+            url = parse('/api/admin/external-credentials');
+            break;
+        case 1:
+            url = parse('/api/admin/external-credentials/:externalCredentialId', [externalCredentialId]);
+            break;
+        case 2:
             url = parse('/api/admin/external-credentials/:externalCredentialId', [externalCredentialId]);
             break;
         default:
@@ -953,8 +953,8 @@ endpoint.aiDataAdmin.externalCredentials.get = function(externalCredentialId, ht
             return;
     }
     sys.logs.debug('[veritoneuser] GET from: ' + url);
-	var options = checkHttpOptions(url, httpOptions);
-	return endpoint._get(options);
+    var options = checkHttpOptions(url, httpOptions);
+    return endpoint._get(options);
 };
 
 endpoint.aiDataAdmin.externalCredentials.post = function(httpOptions) {
@@ -1393,12 +1393,12 @@ endpoint.aiDataAdmin.permissions.get = function(permId, httpOptions) {
     var url;
     switch(arguments.length){
         case 0:
-			url = parse('/api/admin/permissions');
-			break;
-		case 1:
-			url = parse('/api/admin/permissions/:permId', [permId]);
-			break;
-		case 2:
+            url = parse('/api/admin/permissions');
+            break;
+        case 1:
+            url = parse('/api/admin/permissions/:permId', [permId]);
+            break;
+        case 2:
             url = parse('/api/admin/permissions/:permId', [permId]);
             break;
         default:
@@ -1406,8 +1406,8 @@ endpoint.aiDataAdmin.permissions.get = function(permId, httpOptions) {
             return;
     }
     sys.logs.debug('[veritoneuser] GET from: ' + url);
-	var options = checkHttpOptions(url, httpOptions);
-	return endpoint._get(options);
+    var options = checkHttpOptions(url, httpOptions);
+    return endpoint._get(options);
 };
 
 endpoint.aiDataAdmin.analytics.qlik.app.get = function(appId, httpOptions) {
@@ -1421,12 +1421,12 @@ endpoint.aiDataAdmin.analytics.qlik.app.get = function(appId, httpOptions) {
     var url;
     switch(arguments.length){
         case 0:
-			url = parse('/analytics/qlik/app');
-			break;
-		case 1:
-			url = parse('/analytics/qlik/app/:appId', [appId]);
-			break;
-		case 2:
+            url = parse('/analytics/qlik/app');
+            break;
+        case 1:
+            url = parse('/analytics/qlik/app/:appId', [appId]);
+            break;
+        case 2:
             url = parse('/analytics/qlik/app/:appId', [appId]);
             break;
         default:
@@ -1434,8 +1434,8 @@ endpoint.aiDataAdmin.analytics.qlik.app.get = function(appId, httpOptions) {
             return;
     }
     sys.logs.debug('[veritoneuser] GET from: ' + url);
-	var options = checkHttpOptions(url, httpOptions);
-	return endpoint._get(options);
+    var options = checkHttpOptions(url, httpOptions);
+    return endpoint._get(options);
 };
 
 endpoint.aiDataAdmin.analytics.qlik.app.sheet.get = function(appId, httpOptions) {
@@ -1548,12 +1548,12 @@ endpoint.aiDataAdmin.roles.get = function(roleId, httpOptions) {
     var url;
     switch(arguments.length){
         case 0:
-			url = parse('/api/admin/roles');
-			break;
-		case 1:
-			url = parse('/api/admin/roles/:roleId', [roleId]);
-			break;
-		case 2:
+            url = parse('/api/admin/roles');
+            break;
+        case 1:
+            url = parse('/api/admin/roles/:roleId', [roleId]);
+            break;
+        case 2:
             url = parse('/api/admin/roles/:roleId', [roleId]);
             break;
         default:
@@ -1561,8 +1561,8 @@ endpoint.aiDataAdmin.roles.get = function(roleId, httpOptions) {
             return;
     }
     sys.logs.debug('[veritoneuser] GET from: ' + url);
-	var options = checkHttpOptions(url, httpOptions);
-	return endpoint._get(options);
+    var options = checkHttpOptions(url, httpOptions);
+    return endpoint._get(options);
 };
 
 endpoint.aiDataAdmin.roles.permissions.get = function(roleId, httpOptions) {
@@ -1619,12 +1619,12 @@ endpoint.aiDataAdmin.users.get = function(id, httpOptions) {
     var url;
     switch(arguments.length){
         case 0:
-			url = parse('/api/admin/users');
-			break;
-		case 1:
-			url = parse('/api/admin/users/:id', [id]);
-			break;
-		case 2:
+            url = parse('/api/admin/users');
+            break;
+        case 1:
+            url = parse('/api/admin/users/:id', [id]);
+            break;
+        case 2:
             url = parse('/api/admin/users/:id', [id]);
             break;
         default:
@@ -1632,8 +1632,8 @@ endpoint.aiDataAdmin.users.get = function(id, httpOptions) {
             return;
     }
     sys.logs.debug('[veritoneuser] GET from: ' + url);
-	var options = checkHttpOptions(url, httpOptions);
-	return endpoint._get(options);
+    var options = checkHttpOptions(url, httpOptions);
+    return endpoint._get(options);
 };
 
 endpoint.aiDataAdmin.users.delete = function(id, httpOptions) {
@@ -2027,12 +2027,12 @@ endpoint.voice.lexicon.get = function(lexiconId, httpOptions) {
     var url;
     switch(arguments.length){
         case 0:
-			url = parse('/v2/lexicon');
-			break;
-		case 1:
-			url = parse('/v2/lexicon/:lexicon_id', [lexiconId]);
-			break;
-		case 2:
+            url = parse('/v2/lexicon');
+            break;
+        case 1:
+            url = parse('/v2/lexicon/:lexicon_id', [lexiconId]);
+            break;
+        case 2:
             url = parse('/v2/lexicon/:lexicon_id', [lexiconId]);
             break;
         default:
@@ -2040,8 +2040,8 @@ endpoint.voice.lexicon.get = function(lexiconId, httpOptions) {
             return;
     }
     sys.logs.debug('[veritoneuser] GET from: ' + url);
-	var options = checkHttpOptions(url, httpOptions);
-	return endpoint._get(options);
+    var options = checkHttpOptions(url, httpOptions);
+    return endpoint._get(options);
 };
 
 endpoint.voice.lexicon.put = function(lexiconid, httpOptions) {
@@ -2585,12 +2585,12 @@ endpoint.processing.admin.service.instances.get = function(ServiceID, httpOption
     var url;
     switch(arguments.length){
         case 0:
-			url = parse('/edge/v1/admin/service/instances');
-			break;
-		case 1:
-			url = parse('/edge/v1/admin/service/:ServiceID/instances', [ServiceID]);
-			break;
-		case 2:
+            url = parse('/edge/v1/admin/service/instances');
+            break;
+        case 1:
+            url = parse('/edge/v1/admin/service/:ServiceID/instances', [ServiceID]);
+            break;
+        case 2:
             url = parse('/edge/v1/admin/service/:ServiceID/instances', [ServiceID]);
             break;
         default:
@@ -2598,8 +2598,8 @@ endpoint.processing.admin.service.instances.get = function(ServiceID, httpOption
             return;
     }
     sys.logs.debug('[veritoneuser] GET from: ' + url);
-	var options = checkHttpOptions(url, httpOptions);
-	return endpoint._get(options);
+    var options = checkHttpOptions(url, httpOptions);
+    return endpoint._get(options);
 };
 
 endpoint.processing.admin.status.get = function(httpOptions) {
@@ -2717,15 +2717,15 @@ endpoint.processing.admin.config.get = function(ConfigSection, ConfigKey, httpOp
     var url;
     switch(arguments.length){
         case 0:
-			url = parse('/edge/v1/admin/config');
-			break;
-		case 1:
-			url = parse('/edge/v1/admin/config/:ConfigSection', [ConfigSection]);
-			break;
-		case 2:
-			url = parse('/edge/v1/admin/config/:ConfigSection/:ConfigKey', [ConfigSection, ConfigKey]);
-			break;
-		case 3:
+            url = parse('/edge/v1/admin/config');
+            break;
+        case 1:
+            url = parse('/edge/v1/admin/config/:ConfigSection', [ConfigSection]);
+            break;
+        case 2:
+            url = parse('/edge/v1/admin/config/:ConfigSection/:ConfigKey', [ConfigSection, ConfigKey]);
+            break;
+        case 3:
             url = parse('/edge/v1/admin/config/:ConfigSection/:ConfigKey', [ConfigSection,ConfigKey]);
             break;
         default:
@@ -2733,8 +2733,8 @@ endpoint.processing.admin.config.get = function(ConfigSection, ConfigKey, httpOp
             return;
     }
     sys.logs.debug('[veritoneuser] GET from: ' + url);
-	var options = checkHttpOptions(url, httpOptions);
-	return endpoint._get(options);
+    var options = checkHttpOptions(url, httpOptions);
+    return endpoint._get(options);
 };
 
 endpoint.processing.admin.resource.engines.get = function(ResourceID, httpOptions) {
@@ -2983,15 +2983,15 @@ endpoint.processing.admin.config.post = function(ConfigSection, ConfigKey, httpO
     var url;
     switch(arguments.length){
         case 1:
-			url = parse('/edge/v1/admin/config');
-			break;
-		case 2:
-			url = parse('/edge/v1/admin/config/:ConfigSection', [ConfigSection]);
-			break;
-		case 3:
-			url = parse('/edge/v1/admin/config/:ConfigSection/:ConfigKey', [ConfigSection, ConfigKey]);
-			break;
-		case 4:
+            url = parse('/edge/v1/admin/config');
+            break;
+        case 2:
+            url = parse('/edge/v1/admin/config/:ConfigSection', [ConfigSection]);
+            break;
+        case 3:
+            url = parse('/edge/v1/admin/config/:ConfigSection/:ConfigKey', [ConfigSection, ConfigKey]);
+            break;
+        case 4:
             url = parse('/edge/v1/admin/config/:ConfigSection/:ConfigKey', [ConfigSection,ConfigKey,body]);
             break;
         default:
@@ -2999,8 +2999,8 @@ endpoint.processing.admin.config.post = function(ConfigSection, ConfigKey, httpO
             return;
     }
     sys.logs.debug('[veritoneuser] POST from: ' + url);
-	var options = checkHttpOptions(url, httpOptions);
-	return endpoint._post(options);
+    var options = checkHttpOptions(url, httpOptions);
+    return endpoint._post(options);
 };
 
 endpoint.processing.admin.resource.engine.update.post = function(ResourceID, httpOptions) {
@@ -3326,12 +3326,12 @@ endpoint.processing.engine.instances.get = function(EngineID, httpOptions) {
     var url;
     switch(arguments.length){
         case 0:
-			url = parse('/edge/v1/engine/instances');
-			break;
-		case 1:
-			url = parse('/edge/v1/engine/:EngineID/instances', [EngineID]);
-			break;
-		case 2:
+            url = parse('/edge/v1/engine/instances');
+            break;
+        case 1:
+            url = parse('/edge/v1/engine/:EngineID/instances', [EngineID]);
+            break;
+        case 2:
             url = parse('/edge/v1/engine/:EngineID/instances', [EngineID]);
             break;
         default:
@@ -3339,8 +3339,8 @@ endpoint.processing.engine.instances.get = function(EngineID, httpOptions) {
             return;
     }
     sys.logs.debug('[veritoneuser] GET from: ' + url);
-	var options = checkHttpOptions(url, httpOptions);
-	return endpoint._get(options);
+    var options = checkHttpOptions(url, httpOptions);
+    return endpoint._get(options);
 };
 
 endpoint.processing.engine.instance.logs.get = function(EngineInstanceID, httpOptions) {
@@ -4082,12 +4082,12 @@ endpoint.processing.proc.task.reports.get = function(ReportMonth, httpOptions) {
     var url;
     switch(arguments.length){
         case 0:
-			url = parse('/edge/v1/proc/task/reports');
-			break;
-		case 1:
-			url = parse('/edge/v1/proc/task/reports/:ReportMonth', [ReportMonth]);
-			break;
-		case 2:
+            url = parse('/edge/v1/proc/task/reports');
+            break;
+        case 1:
+            url = parse('/edge/v1/proc/task/reports/:ReportMonth', [ReportMonth]);
+            break;
+        case 2:
             url = parse('/edge/v1/proc/task/reports/:ReportMonth', [ReportMonth]);
             break;
         default:
@@ -4095,8 +4095,8 @@ endpoint.processing.proc.task.reports.get = function(ReportMonth, httpOptions) {
             return;
     }
     sys.logs.debug('[veritoneuser] GET from: ' + url);
-	var options = checkHttpOptions(url, httpOptions);
-	return endpoint._get(options);
+    var options = checkHttpOptions(url, httpOptions);
+    return endpoint._get(options);
 };
 
 endpoint.processing.proc.tasks.syncBacklog.get = function(httpOptions) {
@@ -4390,7 +4390,7 @@ endpoint.options = function(url, httpOptions, callbackData, callbacks) {
 };
 
 endpoint.utils = {};
-            
+
 endpoint.utils.parseTimestamp = function(dateString) {
     if (!dateString) {
         return null;
