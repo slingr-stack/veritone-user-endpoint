@@ -88,7 +88,7 @@ processingAdminServiceConfigGet = () => {
 
 aiDataAdminOrganizationsOpenidRolesGet = () => {
     //INIT_INJECTION
-    if (aguments.length === 0 || !id) {
+    if (arguments.length === 0 || !id) {
         sys.logs.error('Invalid argument received. This helper should receive the following parameters as non-empty strings: [id].');
         return;
     }
@@ -123,7 +123,7 @@ aiDataAdminOrganizationsOpenidRolesGet = () => {
 
 voiceTtsVoiceGet = () => {
     //INIT_INJECTION
-    if (aguments.length === 0 || !voiceId) {
+    if (arguments.length === 0 || !voiceId) {
         sys.logs.error('Invalid argument received. This helper should receive the following parameters as non-empty strings: [httpOptions or voiceId].');
         return;
     }
@@ -135,18 +135,19 @@ voiceTtsVoiceGet = () => {
         }
     }
     var url;
+    var options;
     switch(arguments.length-1){
         case 0:
             url = parse('/v2/tts/voice?lang');
-            var options = checkHttpOptions(url, voiceId);
+            options = checkHttpOptions(url, voiceId);
             break;
         case 1:
             url = parse('/v2/tts/voice/:voice_id', [voiceId]);
-            var options = checkHttpOptions(url, httpOptions);
+            options = checkHttpOptions(url, httpOptions);
             break;
         case 2:
             url = parse('/v2/tts/voice/:voice_id', [voiceId]);
-            var options = checkHttpOptions(url, httpOptions);
+            options = checkHttpOptions(url, httpOptions);
             break;
         default:
             sys.logs.error('Invalid argument received.');
