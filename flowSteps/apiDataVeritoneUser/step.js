@@ -28,28 +28,7 @@ step.apiDataVeritoneUser = function (inputs) {
 		readTimeout: inputsLogic.readTimeout
 	}
 
-	switch (inputsLogic.method.toLowerCase()) {
-		case 'get':
-			return endpoint._get(options);
-		case 'post':
-			return endpoint._post(options);
-		case 'delete':
-			return endpoint._delete(options);
-		case 'put':
-			return endpoint._put(options);
-		case 'connect':
-			return endpoint._connect(options);
-		case 'head':
-			return endpoint._head(options);
-		case 'options':
-			return endpoint._options(options);
-		case 'patch':
-			return endpoint._patch(options);
-		case 'trace':
-			return endpoint._trace(options);
-	}
-
-	return null;
+	return endpoint._post(options);
 };
 
 var parse = function (url, pathVariables){
@@ -76,15 +55,3 @@ var isObject = function (obj) {
 };
 
 var stringType = Function.prototype.call.bind(Object.prototype.toString);
-
-var stringToObject = function (obj) {
-	if (!!obj){
-		var keyValue = obj.toString().split(',');
-		var parseObj = {};
-		for(var i = 0; i < keyValue.length; i++) {
-			parseObj[keyValue[i].split('=')[0]] = keyValue[i].split('=')[1]
-		}
-		return parseObj;
-	}
-	return null;
-};
