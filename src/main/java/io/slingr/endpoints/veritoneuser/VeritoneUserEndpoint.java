@@ -17,8 +17,9 @@ import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Objects;
 
-@SlingrEndpoint(name = "veritoneuser")
+@SlingrEndpoint(name = "veritoneuser", functionPrefix = "_")
 public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
     private static final Logger logger = LoggerFactory.getLogger(VeritoneUserEndpoint.class);
 
@@ -27,6 +28,9 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
 
     @EndpointProperty
     private String environment;
+
+    @EndpointProperty
+    private String region;
 
     @EndpointProperty
     private String clientId;
@@ -39,18 +43,58 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
 
     public VeritoneUserEndpoint() { }
 
-    public VeritoneUserEndpoint(String environment) {
-        this.environment = environment;
+    @Override
+    public String getApiUri() { return ""; }
+
+    public String getAIDataApiUri() {
+        String prefix = "https://api";
+        String postfix = ".veritone.com";
+        String apiUri="";
+
+        if (Objects.equals(environment, "dev")) {
+            apiUri = ".dev";
+        } else if (Objects.equals(environment, "stage")) {
+            apiUri = ".stage";
+        }
+
+        if (Objects.equals(region, "us-1")) {
+            apiUri = apiUri + ".us-1";
+        } else if (Objects.equals(region, "ca-1")) {
+            apiUri = apiUri + ".ca-1";
+        } else if (Objects.equals(region, "uk-1")) {
+            apiUri = apiUri + ".uk-1";
+        } else {
+            apiUri = apiUri + region;
+        }
+
+        return prefix + apiUri + postfix;
     }
 
-    @Override
-    public String getApiUri() {
-        if (environment.equals("production")) {
-            return "https://api.us-1.veritone.com";
-        } else {
-            return "https://api.stage-me.us-1.veritone.com";
+    public String getVoiceApiUri() {
+        String prefix = "https://voice2";
+        String postfix = ".veritone.com";
+        String apiUri="";
+
+        if (Objects.equals(environment, "dev")) {
+            apiUri = ".dev";
+        } else if (Objects.equals(environment, "stage")) {
+            apiUri = ".stage";
         }
+
+        if (Objects.equals(region, "us-1")) {
+            apiUri = apiUri + ".us-1";
+        } else if (Objects.equals(region, "ca-1")) {
+            apiUri = apiUri + ".ca-1";
+        } else if (Objects.equals(region, "uk-1")) {
+            apiUri = apiUri + ".uk-1";
+        } else {
+            apiUri = apiUri + region;
+        }
+
+        return prefix + apiUri + postfix + "/api";
     }
+
+    public String getProcessingApiUri() { return "https://api.aiware.com"; }
 
     @Override
     public void endpointStarted() {
@@ -70,6 +114,7 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
                 "</html>", ContentType.TEXT_HTML.toString());
     }
 
+    // Connexion process with Veritone from the users Integration
     @EndpointFunction(name = ReservedName.CONNECT_USER)
     public Json connectUser(FunctionRequest request) {
         final String userId = request.getUserId();
@@ -89,6 +134,7 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
         return Json.map();
     }
 
+    // First try to get the access token from the user configuration with the code
     private Json accessTokenRequest(FunctionRequest request, String userId) {
         // checks if the user includes a non-empty 'code' on the request
         final Json jsonBody = request.getJsonParams();
@@ -103,27 +149,85 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
                             .set("redirect_uri", jsonBody.string("redirectUri"))
                             .set("grant_type", "authorization_code")
                     );
-            Json res = RestClient.builder(getApiUri().concat("/v1/admin/oauth/token")).httpPost(accessTokenRequest);
+            Json res = RestClient.builder(getAIDataApiUri().concat("/v1/admin/oauth/token")).httpPost(accessTokenRequest);
             if (res.contains("access_token")) {
                 return setUserConnected(request, userId, res);
             } else {
-                logger.warn(String.format("Problems trying to connect user [%s] to Veritone: %s", userId, res.toString()));
+                logger.warn(String.format("Problems trying to connect user [%s] to Veritone: %s", userId, res));
                 appLogger.warn(String.format("Problems trying to connect user [%s] to Veritone %s", userId, res.string("error")));
             }
         } else {
-            logger.info(String.format("Empty 'code' when try to connect user [%s] [%s]", userId, request.toString()));
+            logger.info(String.format("Empty 'code' when try to connect user [%s] [%s]", userId, request));
         }
         return Json.map();
     }
 
-    @EndpointFunction(name = "_post")
-    public Json userPost(FunctionRequest request) {
+    // Save the user configuration
+    private Json setUserConnected(FunctionRequest request, String userId, Json res) {
+        Json conf = users().save(userId, res);
+        logger.info(String.format("User connected [%s] [%s]", userId, conf.toString()));
+        users().sendUserConnectedEvent(request.getFunctionId(), userId, conf);
+        return conf;
+    }
+
+    // If the access token is expired, try to get a new one and save it
+    private void generateNewAccessToken(FunctionRequest request) {
+        final String userId = request.getUserId();
+        Json userConfig = users().findById(userId);
+        if (userConfig == null || userConfig.isEmpty("refresh_token")) {
+            throw EndpointException.permanent(ErrorCode.CLIENT, String.format("User [%s] is not connected", request.getUserEmail()));
+        }
+        String refreshToken = userConfig.string("refresh_token");
+        Json accessTokenRequest = Json.map()
+                .set("headers", Json.map().set("Content-Type", "application/x-www-form-urlencoded"))
+                .set("body", Json.map()
+                        .set("client_id", clientId)
+                        .set("client_secret", clientSecret)
+                        .set("grant_type", "refresh_token")
+                        .set("refresh_token", refreshToken)
+                );
         try {
+            Json res = RestClient.builder(getAIDataApiUri().concat("/v1/admin/oauth/token")).httpPost(accessTokenRequest);
+            if (res.contains("access_token")) {
+                setUserConnected(request, userId, res);
+            } else {
+                logger.warn(String.format("Problems trying to connect user [%s] to Veritone: %s", userId, res));
+                appLogger.warn(String.format("Problems trying to connect user [%s] to Veritone %s", userId, res.string("error")));
+            }
+        } catch (Exception e) {
+            appLogger.error(String.format("Error refreshing token for client ID [%s]. You might need to get a new refresh token.", clientId));
+            throw e;
+        }
+    }
+
+    @EndpointFunction(name = "_get")
+    public Json get(FunctionRequest request) {
+        try {
+            request=setFunctionRequestUrl(request);
+            setUserRequestHeaders(request);
+            return defaultGetRequest(request);
+        } catch (EndpointException restException) {
+            if (restException.getHttpStatusCode() == 401) {
+                // We might need to refresh the token
+                generateNewAccessToken(request);
+                setUserRequestHeaders(request);
+                return defaultGetRequest(request);
+            } else if (restException.getCode() == ErrorCode.CLIENT) {
+                users().sendUserDisconnectedEvent(request.getUserId());
+            }
+            throw restException;
+        }
+    }
+
+    @EndpointFunction(name = "_post")
+    public Json post(FunctionRequest request) {
+        try {
+            request=setFunctionRequestUrl(request);
             setUserRequestHeaders(request);
             return defaultPostRequest(request);
         } catch (EndpointException restException) {
             if (restException.getHttpStatusCode() == 401) {
-                // we might need to refresh the token
+                // We might need to refresh the token
                 generateNewAccessToken(request);
                 setUserRequestHeaders(request);
                 return defaultPostRequest(request);
@@ -132,31 +236,80 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
             }
             throw restException;
         }
-    }
-    @EndpointFunction
-    public Json userPostTest(FunctionRequest request) {
-        try {
-            setUserRequestHeaders(request);
-            return defaultPostRequest(request);
-        } catch (EndpointException restException) {
-            // not sure why but veritone sometimes retunrs 404 when the token is wrong
-            if (restException.getHttpStatusCode() == 401 || restException.getHttpStatusCode() == 404) {
-                // we might need to refresh the token
-                generateNewAccessToken(request);
-                setUserRequestHeaders(request);
-                return defaultPostRequest(request);
-            } else if (restException.getCode() == ErrorCode.CLIENT) {
-                users().sendUserDisconnectedEvent(request.getUserId());
-            }
-            throw restException;
-        }
-    }
-    @EndpointWebService(methods = {RestMethod.POST})
-    private WebServiceResponse inboundEvent(WebServiceRequest request) {
-        events().send("webhook", request.getJsonBody());
-        return new WebServiceResponse();
     }
 
+    @EndpointFunction(name = "_put")
+    public Json put(FunctionRequest request) {
+        try {
+            request=setFunctionRequestUrl(request);
+            setUserRequestHeaders(request);
+            return defaultPutRequest(request);
+        } catch (EndpointException restException) {
+            if (restException.getHttpStatusCode() == 401) {
+                // We might need to refresh the token
+                generateNewAccessToken(request);
+                setUserRequestHeaders(request);
+                return defaultPutRequest(request);
+            } else if (restException.getCode() == ErrorCode.CLIENT) {
+                users().sendUserDisconnectedEvent(request.getUserId());
+            }
+            throw restException;
+        }
+    }
+
+    @EndpointFunction(name = "_patch")
+    public Json patch(FunctionRequest request) {
+        try {
+            request=setFunctionRequestUrl(request);
+            setUserRequestHeaders(request);
+            return defaultPatchRequest(request);
+        } catch (EndpointException restException) {
+            if (restException.getHttpStatusCode() == 401) {
+                // We might need to refresh the token
+                generateNewAccessToken(request);
+                setUserRequestHeaders(request);
+                return defaultPatchRequest(request);
+            } else if (restException.getCode() == ErrorCode.CLIENT) {
+                users().sendUserDisconnectedEvent(request.getUserId());
+            }
+            throw restException;
+        }
+    }
+
+    @EndpointFunction(name = "_delete")
+    public Json delete(FunctionRequest request) {
+        try {
+            request=setFunctionRequestUrl(request);
+            setUserRequestHeaders(request);
+            return defaultDeleteRequest(request);
+        } catch (EndpointException restException) {
+            if (restException.getHttpStatusCode() == 401) {
+                // We might need to refresh the token
+                generateNewAccessToken(request);
+                setUserRequestHeaders(request);
+                return defaultDeleteRequest(request);
+            } else if (restException.getCode() == ErrorCode.CLIENT) {
+                users().sendUserDisconnectedEvent(request.getUserId());
+            }
+            throw restException;
+        }
+    }
+
+    // Set the correct URL for the request
+    private FunctionRequest setFunctionRequestUrl(FunctionRequest request) {
+        Json requestUpdated = request.toJson();
+        Json params = requestUpdated.json("params");
+        if (request.getJsonParams().string("path").startsWith("/edge/v1/")) {
+            requestUpdated.set("params", params.set("path", getProcessingApiUri() + requestUpdated.json("params").string("path")));
+        } else if (request.getJsonParams().string("path").startsWith("/v2/")) {
+            requestUpdated.set("params", params.set("path", getVoiceApiUri() + requestUpdated.json("params").string("path")));
+        } else {
+            requestUpdated.set("params", params.set("path", getAIDataApiUri() + requestUpdated.json("params").string("path")));
+        }
+        return new FunctionRequest(requestUpdated);
+    }
+
+    // All requests to Veritone need the access token here we set it
     private void setUserRequestHeaders(FunctionRequest request) {
         Json userConfig = users().findById(request.getUserId());
         if (userConfig == null || userConfig.isEmpty("access_token")) {
@@ -174,41 +327,9 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
         request.getRequest().set("params", body);
     }
 
-    private void generateNewAccessToken(FunctionRequest request) {
-        final String userId = request.getUserId();
-        Json userConfig = users().findById(userId);
-        if (userConfig == null || userConfig.isEmpty("refresh_token")) {
-            throw EndpointException.permanent(ErrorCode.CLIENT, String.format("User [%s] is not connected", request.getUserEmail()));
-        }
-        String refreshToken = userConfig.string("refresh_token");
-        Json accessTokenRequest = Json.map()
-                .set("headers", Json.map().set("Content-Type", "application/x-www-form-urlencoded"))
-                .set("body", Json.map()
-                        .set("client_id", clientId)
-                        .set("client_secret", clientSecret)
-                        .set("grant_type", "refresh_token")
-                        .set("refresh_token", refreshToken)
-                );
-        try {
-            Json res = RestClient.builder(getApiUri().concat("/v1/admin/oauth/token")).httpPost(accessTokenRequest);
-            if (res.contains("access_token")) {
-                setUserConnected(request, userId, res);
-            } else {
-                logger.warn(String.format("Problems trying to connect user [%s] to Veritone: %s", userId, res.toString()));
-                appLogger.warn(String.format("Problems trying to connect user [%s] to Veritone %s", userId, res.string("error")));
-            }
-        } catch (Exception e) {
-            appLogger.error(String.format("Error refreshing token for client ID [%s]. You might need to get a new refresh token.", clientId));
-            throw e;
-        }
-    }
-
-    private Json setUserConnected(FunctionRequest request, String userId, Json res) {
-        // saves the information on the users data store
-        Json conf = users().save(userId, res);
-        logger.info(String.format("User connected [%s] [%s]", userId, conf.toString()));
-        // sends connected user event
-        users().sendUserConnectedEvent(request.getFunctionId(), userId, conf);
-        return conf;
+    @EndpointWebService(methods = {RestMethod.POST})
+    private WebServiceResponse inboundEvent(WebServiceRequest request) {
+        events().send("webhook", request.getJsonBody());
+        return new WebServiceResponse();
     }
 }

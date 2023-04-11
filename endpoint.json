@@ -26,23 +26,54 @@
     ],
     "functions": [
         {
+            "label": "GET",
+            "name": "_get",
+            "functionType": "PER_USER",
+            "description": "Sends a GET request"
+        },
+        {
             "label": "POST",
             "name": "_post",
             "functionType": "PER_USER",
-            "description": "Sends a POST request using user credentials"
+            "description": "Sends a POST request"
         },
         {
-            "label": "POST TEST",
-            "name": "userPostTest",
+            "label": "PUT",
+            "name": "_put",
             "functionType": "PER_USER",
-            "description": "Sends a POST request using user credentials"
+            "description": "Sends a PUT request"
+        },
+        {
+            "label": "PATCH",
+            "name": "_patch",
+            "functionType": "PER_USER",
+            "description": "Sends a PATCH request"
+        },
+        {
+            "label": "DELETE",
+            "name": "_delete",
+            "functionType": "PER_USER",
+            "description": "Sends a DELETE request"
+        },
+        {
+            "label": "HEAD",
+            "name": "_head",
+            "functionType": "PER_USER",
+            "description": "Sends a HEAD request"
+        },
+        {
+            "label": "OPTIONS",
+            "name": "_options",
+            "functionType": "PER_USER",
+            "description": "Sends a OPTIONS request"
         }
     ],
     "scripts": [
         "functions.js"
     ],
     "flowSteps": [
-        "apiCallVeritoneuser"
+        "apiCallVeritoneUser",
+        "apiDataVeritoneUser"
     ],
     "listeners":[],
     "configuration":[
@@ -55,27 +86,86 @@
         {
             "name": "environment",
             "label": "Environment",
-            "type": "text",
-            "required": true
+            "description": "Select the environment to target for the AI Data API and AI Data Admin. (If you are unsure, select 'Production')",
+            "type": "buttonsGroup",
+            "required": true,
+            "defaultValue": "prod",
+            "typeOptions": {
+                "allowCustom": false,
+                "possibleValues":[
+                    {
+                        "label":"Developer",
+                        "name":"dev"
+                    },
+                    {
+                        "label":"Staging",
+                        "name":"stage"
+                    },
+                    {
+                        "label":"Production",
+                        "name":"prod"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "region",
+            "label": "Geographic region",
+            "description": "Select the geographic region to be targeted by the AI Data API and AI Data Admin. (Custom allowed i.e. 'us-1'. If you are unsure, select 'Without region')",
+            "type": "buttonsGroup",
+            "required": true,
+            "defaultValue": "no",
+            "typeOptions": {
+                "allowCustom": true,
+                "possibleValues":[
+                    {
+                        "label":"US-1",
+                        "name":"us-1"
+                    },
+                    {
+                        "label":"CA-1",
+                        "name":"ca-1"
+                    },
+                    {
+                        "label":"UK-1",
+                        "name":"uk-1"
+                    },
+                    {
+                        "label":"UK",
+                        "name":"uk"
+                    },
+                    {
+                        "label":"Without region",
+                        "name":"no"
+                    }
+                ]
+            }
         },
         {
             "name": "clientId",
             "label": "Client ID",
-            "description": "The client ID used for OAuth",
+            "description": "The client ID of your Veritone App",
             "type": "text",
             "required": true
         },
         {
             "name": "clientSecret",
             "label": "Client secret",
-            "description": "The client secret used for OAuth",
+            "description": "The client secret of your Veritone App",
             "type": "text",
             "required": true
         },
         {
+            "name": "oauthURL",
+            "label": "OAuth URL",
+            "description": "The OAuth URL to configure in your Veritone App (Copy this value and paste it in the 'URL' field of your Veritone App), If you rename the endpoint, you will need to update this value (i.e. https://appname.slingr.io/dev/runtime).",
+            "type": "label",
+            "value": "config.WEBHOOK_URL.replace('/endpoints/veritoneuser23', '/runtime')"
+        },
+        {
             "name": "oauthCallback",
-            "label": "OAuth callback",
-            "description": "The OAuth callback to configure in your Veritone App",
+            "label": "OAuth Redirect URI",
+            "description": "The OAuth redirect URL to configure in your Veritone App (Copy this value and paste it in the 'Redirect URI' field of your Veritone App)",
             "type": "label",
             "value": "config.WEBHOOK_URL+'/authCallback'"
         },
@@ -86,7 +176,7 @@
             "value": "@config.WEBHOOK_URL"
         }
     ],
-    "userConfiguration":[
+    "userConfiguration": [
         {
             "name": "code",
             "label": "Token",
@@ -106,7 +196,7 @@
             "typeOptions": {
                 "color": "primary",
                 "icon": "zmdi-play",
-                "action": "var redirectUri = config.WEBHOOK_URL.replace(\"/endpoints/veritoneuser\", \"/runtime/api/sso/veritone/consumer\");\nvar url = (config.ENDPOINT_CONFIG['environment'] !== 'production' ? 'https://api.veritone.com' : 'https://api.stage.us-1.veritone.com')+'/v1/admin/oauth/authorize?response_type=code&client_id='+config.ENDPOINT_CONFIG['clientId']+'&redirect_uri='+redirectUri+'&scope=all';\nvar win = window.open(url, 'Authorization page', 'toolbar=no,scrollbars=no,location=no,statusbar=no,menubar=no,resizable=0,width=500,height=600,left='+((screen.width/2)-250)+',top='+((screen.height/2)-250)+',');\n\nvar self = this;\n\nvar intervalFn = function() {\n\ttry {\n\t\tif (!win || !win.document) {\n\t\t\twindow.clearInterval(pollTimer);\n\t\t}else{\n\t\t\tif (win.document.URL.indexOf('/authCallback') != -1) {\n\t\t\t\twin.innerWidth = 100;\n\t\t\t\twin.innerHeight = 100;\n\t\t\t\twin.screenX = screen.width;\n\t\t\t\twin.screenY = screen.height;\n\t\t\t\twindow.clearInterval(pollTimer);\n\t\t\t\turl = win.document.URL;\n\t\t\t\tvar pos = url.indexOf('code=');\n\t\t\t\tif(pos > -1) {\n\t\t\t\t\tvar token = url.substring(pos + 5);\n\t\t\t\t\t\t\t\t\t\tvar limit = token.indexOf(\"&\");\n\t\t\t\t\tif (limit > -1) {\n\t\t\t\t\t\ttoken = token.substring(0, limit);\n\t\t\t\t\t}\nconfig.code = token;\n\t\t\t\t\tconfig.redirectUri = redirectUri;\n\t\t\t\t\tif (utils.connectToService) {\n\t\t\t\t\t\tutils.connectToService();\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\ttry{win.close();}catch(e){}\n\t\t\t}\n\t\t}\n\t} catch(e) {}\n};\n\nvar pollTimer = window.setInterval(function() {intervalFn.apply(self);}, 500);"
+                "action": "var redirectUri = config.WEBHOOK_URL + '/authCallback'; \nvar url = 'https://api' + (config.ENDPOINT_CONFIG['environment'] === 'dev' ? '.dev' : config.ENDPOINT_CONFIG['environment'] === 'stage' ? '.stage' : '') + (config.ENDPOINT_CONFIG['region'] === 'us-1' ? '.us-1' : config.ENDPOINT_CONFIG['region'] === 'ca-1' ? '.ca-1' : config.ENDPOINT_CONFIG['region'] === 'uk-1' ? '.uk-1' : config.ENDPOINT_CONFIG['region']) + '.veritone.com/v1/admin/oauth/authorize?response_type=code&client_id=' + config.ENDPOINT_CONFIG['clientId'] + '&redirect_uri=' + redirectUri + '&scope=all';\nvar win = window.open(url, 'Authorization page', 'toolbar=no,scrollbars=no,location=no,statusbar=no,menubar=no,resizable=0,width=500,height=600,left='+((screen.width/2)-250)+',top='+((screen.height/2)-250)+',');\n\nvar self = this;\n\nvar intervalFn = function() {\n\ttry {\n\t\tif (!win || !win.document) {\n\t\t\twindow.clearInterval(pollTimer);\n\t\t}else{\n\t\t\tif (win.document.URL.indexOf('/authCallback') !== -1) {\n\t\t\t\twin.innerWidth = 100;\n\t\t\t\twin.innerHeight = 100;\n\t\t\t\twin.screenX = screen.width;\n\t\t\t\twin.screenY = screen.height;\n\t\t\t\twindow.clearInterval(pollTimer);\n\t\t\t\turl = win.document.URL;\n\t\t\t\tvar pos = url.indexOf('code=');\n\t\t\t\tif(pos > -1) {\n\t\t\t\t\tvar token = url.substring(pos + 5);\n\t\t\t\t\t\t\t\t\t\tvar limit = token.indexOf(\"&\");\n\t\t\t\t\tif (limit > -1) {\n\t\t\t\t\t\ttoken = token.substring(0, limit);\n\t\t\t\t\t}\nconfig.code = token;\n\t\t\t\t\tconfig.redirectUri = redirectUri;\n\t\t\t\t\tif (utils.connectToService) {\n\t\t\t\t\t\tutils.connectToService();\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\ttry{win.close();}catch(e){}\n\t\t\t}\n\t\t}\n\t} catch(e) {}\n};\n\nvar pollTimer = window.setInterval(function() {intervalFn.apply(self);}, 500);"
             },
             "visibility" : "config.ENDPOINT_STATUS == 'DISCONNECTED'"
         }
