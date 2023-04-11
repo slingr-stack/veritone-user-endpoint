@@ -72,8 +72,8 @@
         "functions.js"
     ],
     "flowSteps": [
-        "apiCallVeritoneuser",
-        "apiDataVeritoneuser"
+        "apiCallVeritoneUser",
+        "apiDataVeritoneUser"
     ],
     "listeners":[],
     "configuration":[

@@ -14,7 +14,7 @@
  * {number} connectionTimeout, Read timeout interval, in milliseconds.
  * {number} readTimeout, Connect timeout interval, in milliseconds.
  */
-step.apiCallVeritoneuser = function (inputs) {
+step.apiCallVeritoneUser = function (inputs) {
 
 	var inputsLogic = {
 		headers: inputs.headers || [],

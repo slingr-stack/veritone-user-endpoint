@@ -1,6 +1,6 @@
 {
   "label": "API call to veritoneuser",
-  "name": "apiCallVeritoneuser",
+  "name": "apiCallVeritoneUser",
   "category": "integrations",
   "description": "This flow step will send generic request to veritoneuser",
   "inputs": [

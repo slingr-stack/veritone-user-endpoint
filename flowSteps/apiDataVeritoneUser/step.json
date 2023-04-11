@@ -1,6 +1,6 @@
 {
   "label": "API AI Data call to veritoneuser",
-  "name": "apiDataVeritoneuser",
+  "name": "apiDataVeritoneUser",
   "category": "integrations",
   "description": "This flow step will send a request to AI Data API from Veritone User Endpoint",
   "inputs": [

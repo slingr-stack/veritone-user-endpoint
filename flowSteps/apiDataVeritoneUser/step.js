@@ -8,7 +8,7 @@
  * {number} connectionTimeout, Read timeout interval, in milliseconds.
  * {number} readTimeout, Connect timeout interval, in milliseconds.
  */
-step.apiDataVeritoneuser = function (inputs) {
+step.apiDataVeritoneUser = function (inputs) {
 
 	var inputsLogic = {
 		fullResponse: inputs.fullResponse || false,
