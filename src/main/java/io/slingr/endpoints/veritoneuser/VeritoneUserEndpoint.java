@@ -55,6 +55,8 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
             apiUri = ".dev";
         } else if (Objects.equals(environment, "stage")) {
             apiUri = ".stage";
+        } else if (Objects.equals(environment, "stage-me")) {
+            apiUri = ".stage-me";
         }
 
         if (Objects.equals(region, "us-1")) {

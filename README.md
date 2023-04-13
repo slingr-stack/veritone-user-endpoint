@@ -65,7 +65,6 @@ Reference the [GraphQL API](https://docs.veritone.com/#/apis/using-graphql) and 
 9. When you perform the Push of the Slingr application you will be prompted to log in to Veritone, once done the endpoint is fully configured (This last step of logging in to Veritone will be requested to all users who use the Slingr App).
 
 - The Enviroment and Geographic region (Or location) fields can be obtained from the url from which you are registered and to which you are logging in step 4.
-- **A Single Sign On system for Veritone services is included in the Slingr platform. The configuration of this endpoint does not require the configuration of this SSO system.**
 
 # Quick start
 
