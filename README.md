@@ -17,6 +17,7 @@ Some features in this endpoint are:
 - Helpers to make API Rest calls
 - Flow Step to make GraphQL queries
 - Flow Step to make Generics API Rest calls
+- Joint authentication with Single Sign On
 
 To make a GraphQL query, you can do something like this:
 
@@ -53,6 +54,8 @@ Reference the [GraphQL API](https://docs.veritone.com/#/apis/using-graphql) and 
 
 # Configuration And Veritone App
 
+## Endpoint
+
 1. Go to the App Builder of your Application in the section "Endpoints" and click on the button "+ Create" -> Veritone User.
 2. Copy the last field "OAuth callback" (We will complete the fields in the Slingr App again after creating the Veritone App).
 3. You will need to create an account at Veritone [here](https://www.veritone.com/careers/contact-us/)
@@ -65,6 +68,21 @@ Reference the [GraphQL API](https://docs.veritone.com/#/apis/using-graphql) and 
 9. When you perform the Push of the Slingr application you will be prompted to log in to Veritone, once done the endpoint is fully configured (This last step of logging in to Veritone will be requested to all users who use the Slingr App).
 
 - The Enviroment and Geographic region (Or location) fields can be obtained from the url from which you are registered and to which you are logging in step 4.
+
+## Single Sign On
+
+There is an option in the Security section of the Builder of each Slingr Application which allows to configure a Single Sign On, this endpoint is necessary to be able to configure this SSO.
+
+After configuring the Endpoint and the Veritone Application:
+
+1. Go to the App Builder of your Application in the section "Security -> Single Sign On" and click on the button "+ Create".
+2. Select type "Veritone" and complete the fields with the label and name.
+3. Select the same environment and location as in the Veritone User Endpoint.
+4. Copy the field OAuth redirect URI provided by the Veritone User Endpoint. (Same value as in step 2 or 7 of the Endpoint configuration)
+5. Complete the fields "Client ID" and "Client Secret" with the values obtained in the Veritone Application.
+6. Click on the button "+ Create" and then "Push changes".
+
+- **The endpoint must be Deployed** to be able to use the SSO.
 
 # Quick start
 
