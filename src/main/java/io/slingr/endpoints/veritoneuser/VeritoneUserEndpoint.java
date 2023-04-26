@@ -65,6 +65,8 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
             apiUri = apiUri + ".ca-1";
         } else if (Objects.equals(region, "uk-1")) {
             apiUri = apiUri + ".uk-1";
+        } else if (Objects.equals(region, "uk")) {
+            apiUri = apiUri + ".uk";
         } else {
             apiUri = apiUri + region;
         }
@@ -111,7 +113,7 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
                 "<head>\n" +
                 "<title>Veritone authentication</title>\n" +
                 "</head>\n" +
-                "<body>\n" +
+                "<body>Connecting. Slingr <-> Veritone\n" +
                 "</body>\n" +
                 "</html>", ContentType.TEXT_HTML.toString());
     }
