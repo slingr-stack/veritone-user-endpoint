@@ -67,6 +67,8 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
             apiUri = apiUri + ".uk-1";
         } else if (Objects.equals(region, "uk")) {
             apiUri = apiUri + ".uk";
+        } else if (Objects.equals(region, "no")) {
+            apiUri = apiUri + "";
         } else {
             apiUri = apiUri + region;
         }
