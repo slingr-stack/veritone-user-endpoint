@@ -226,15 +226,16 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
                 generateNewAccessToken(request);
                 setUserRequestHeaders(request);
                 return defaultGetRequest(request);
-            } else if (restException.getCode() == ErrorCode.CLIENT) {
+            } else try {
                 logger.error(String.format("Problems trying to execute request [%s] exception: [%s]", request, restException));
                 appLogger.error("Endpoint client error trying to execute request, verify your metadata.");
                 appLogger.info("Retrying request.");
                 generateNewAccessToken(request);
                 setUserRequestHeaders(request);
                 return defaultGetRequest(request);
+            } catch (Exception e) {
+                throw restException;
             }
-            throw restException;
         }
     }
 
@@ -250,15 +251,18 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
                 generateNewAccessToken(request);
                 setUserRequestHeaders(request);
                 return defaultPostRequest(request);
-            } else if (restException.getCode() == ErrorCode.CLIENT) {
-                logger.error(String.format("Problems trying to execute request [%s] exception: [%s]", request, restException));
-                appLogger.error("Endpoint client error trying to execute request, verify your metadata.");
-                appLogger.info("Retrying request.");
-                generateNewAccessToken(request);
-                setUserRequestHeaders(request);
-                return defaultPostRequest(request);
+            } else {
+                try {
+                    logger.error(String.format("Problems trying to execute request [%s] exception: [%s]", request, restException));
+                    appLogger.error("Endpoint client error trying to execute request, verify your metadata.");
+                    appLogger.info("Retrying request.");
+                    generateNewAccessToken(request);
+                    setUserRequestHeaders(request);
+                    return defaultPostRequest(request);
+                } catch (Exception e) {
+                    throw restException;
+                }
             }
-            throw restException;
         }
     }
 
@@ -274,15 +278,16 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
                 generateNewAccessToken(request);
                 setUserRequestHeaders(request);
                 return defaultPutRequest(request);
-            } else if (restException.getCode() == ErrorCode.CLIENT) {
+            } else try {
                 logger.error(String.format("Problems trying to execute request [%s] exception: [%s]", request, restException));
                 appLogger.error("Endpoint client error trying to execute request, verify your metadata.");
                 appLogger.info("Retrying request.");
                 generateNewAccessToken(request);
                 setUserRequestHeaders(request);
-                return defaultPutRequest(request);
+                return defaultPostRequest(request);
+            } catch (Exception e) {
+                throw restException;
             }
-            throw restException;
         }
     }
 
@@ -298,15 +303,16 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
                 generateNewAccessToken(request);
                 setUserRequestHeaders(request);
                 return defaultPatchRequest(request);
-            } else if (restException.getCode() == ErrorCode.CLIENT) {
+            } else try {
                 logger.error(String.format("Problems trying to execute request [%s] exception: [%s]", request, restException));
                 appLogger.error("Endpoint client error trying to execute request, verify your metadata.");
                 appLogger.info("Retrying request.");
                 generateNewAccessToken(request);
                 setUserRequestHeaders(request);
-                return defaultPatchRequest(request);
+                return defaultPostRequest(request);
+            } catch (Exception e) {
+                throw restException;
             }
-            throw restException;
         }
     }
 
@@ -322,15 +328,16 @@ public class VeritoneUserEndpoint extends HttpPerUserEndpoint {
                 generateNewAccessToken(request);
                 setUserRequestHeaders(request);
                 return defaultDeleteRequest(request);
-            } else if (restException.getCode() == ErrorCode.CLIENT) {
+            } else try {
                 logger.error(String.format("Problems trying to execute request [%s] exception: [%s]", request, restException));
                 appLogger.error("Endpoint client error trying to execute request, verify your metadata.");
                 appLogger.info("Retrying request.");
                 generateNewAccessToken(request);
                 setUserRequestHeaders(request);
-                return defaultDeleteRequest(request);
+                return defaultPostRequest(request);
+            } catch (Exception e) {
+                throw restException;
             }
-            throw restException;
         }
     }
 
